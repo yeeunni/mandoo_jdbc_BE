@@ -23,16 +23,20 @@ public enum GlobalErrorCode {
     // 401 Unauthorized - 권한 없음
     LOGIN_REQUIRED(UNAUTHORIZED, "로그인이 필요한 서비스입니다."),
     MEMBER_NOT_AUTHORIZED(UNAUTHORIZED, "접근 권한이 있는 회원이 아닙니다."),
+    USER_NOT_AUTHORIZED(UNAUTHORIZED, "사용자가 권한이 없습니다."),
 
     // 404 Not Found - 찾을 수 없음
     EMAIL_NOT_FOUND(NOT_FOUND, "존재하지 않는 이메일 입니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 사용자가 없습니다."),
     MEMBER_INFO_NOT_FOUND(NOT_FOUND, "등록된 사용자 정보가 없습니다."),
+
+    POST_NOT_FOUND(NOT_FOUND, "등록된 게시물이 없습니다."),
     
     // 409 CONFLICT : Resource 를 찾을 수 없음
     DUPLICATE_EMAIL(CONFLICT, "중복된 이메일이 존재합니다."),
-    DUPLICATE_NICKNAME(CONFLICT, "중복된 닉네임이 존재합니다.")
-    ;
+    DUPLICATE_NICKNAME(CONFLICT, "중복된 닉네임이 존재합니다."),
+    CATEGORY_NOT_FOUND(CONFLICT, "카테고리를 찾을 수 없음"),
+    FILE_SAVE_ERROR(CONFLICT, "파일을 저장할 수 없음");
 
 
 
