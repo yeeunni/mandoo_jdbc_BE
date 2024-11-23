@@ -147,21 +147,16 @@ public class SellPostServiceImpl implements SellPostService {
 
         // 4. 이미지 처리
         List<MultipartFile> images = Optional.ofNullable(request.getImages()).orElse(Collections.emptyList());
+
+
+        // 기존 이미지 삭제 및 새 이미지 추가
         if (!images.isEmpty()) {
-            // 4.1 기존 이미지 삭제
             if (sellPost.getImages() != null) {
-                for (SellImagePath imagePath : sellPost.getImages()) {
-                    File file = new File(imagePath.getPath());
-                    if (file.exists() && !file.delete()) {
-                        log.warn("Failed to delete file: {}", imagePath.getPath());
-                    }
-                }
+                sellPost.getImages().clear();
             }
 
-            // 4.2 새 이미지 저장
             List<SellImagePath> imagePaths = images.stream().map(file -> {
                 try {
-                    // 파일 저장
                     String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
                     String filePath = Paths.get(uploadPath, fileName).toString();
 
@@ -171,25 +166,20 @@ public class SellPostServiceImpl implements SellPostService {
                     }
                     file.transferTo(new File(filePath));
 
-                    // SellImagePath 생성
+
                     return SellImagePath.builder()
                             .path(filePath)
-                            .sellPost(sellPost) // 연관 설정
-                            .build();
-
+                            .sellPost(sellPost)
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to save file: " + file.getOriginalFilename(), e);
                 }
             }).collect(Collectors.toList());
 
-            // 새 이미지 리스트 설정
             sellPost.setImages(imagePaths);
         }
 
-        // 3. 기본값 설정 (price가 null일 경우)
+        // 필드 업데이트
         int price = Optional.ofNullable(request.getPrice()).orElse(0);
-
-
         sellPost.update(
                 request.getTitle(),
                 price,
@@ -197,8 +187,8 @@ public class SellPostServiceImpl implements SellPostService {
                 request.getCity(),
                 request.getGu(),
                 request.getDong(),
-                categories,
-                sellPost.getImages() // 최신 이미지 리스트
+
+                categories
         );
 
         sellPostRepository.save(sellPost);
