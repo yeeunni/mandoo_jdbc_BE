@@ -12,12 +12,15 @@ import mandooparty.mandoo.web.dto.MemberDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static mandooparty.mandoo.converter.MemberConverter.memberLoginResponseDto;
+import static mandooparty.mandoo.converter.MemberConverter.memberSignUpResponseDto;
 
 @Service
 @Slf4j
@@ -75,6 +78,7 @@ public class MemberServiceImpl implements MemberService {
 
             if (password.equals(member.getPassword())) { //만약 요청의 패스워드마저 같으면
                 member.setLoginStatus(true);
+                member.setLoginTime(LocalDateTime.now());
                 return memberLoginResponseDto(member); //사용자의 정보를 return해준다.
             } else {
                 throw new GlobalException(GlobalErrorCode.PASSWORD_MISMATCH); //비밀번호가 일치하지않는다면
@@ -101,6 +105,44 @@ public class MemberServiceImpl implements MemberService {
             }
         } else {
             throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND); // 이메일로 회원을 찾지 못한 경우 예외 발생
+        }
+    }
+    @Override
+    @Transactional
+    public MemberDTO.MemberSignUpResponseDto changePassword(Long memberId, String newPassword) {
+        Optional <Member> findMember = memberRepository.findById(memberId);
+
+        if (findMember.isPresent()) { //사용자가 있고
+            Member member = findMember.get();
+                if (member.getIsLogin()){ //로그인 상태이면
+                member.changePassword(newPassword); //비밀번호 업데이트
+                memberRepository.save(member);
+                return memberSignUpResponseDto(member);
+            }
+            else{
+                throw new GlobalException(GlobalErrorCode.ALREADY_LOGGED_OUT); // 이미 로그아웃 상태일 때 예외 발생
+            }
+
+        } else {
+            throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND); //멤버 식별자로 회원을 찾지 못한 경우 예외 발생
+        }
+
+    }
+    @Override
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Optional <Member> findMember = memberRepository.findById(memberId);
+
+        if (findMember.isPresent()) { //사용자가 있고
+            Member member = findMember.get();
+            if (member.getIsLogin()){ //로그인 상태이고
+                memberRepository.deleteById(memberId); // JPA 기본 메서드 사용
+            }else{
+                throw new GlobalException(GlobalErrorCode.ALREADY_LOGGED_OUT); // 이미 로그아웃 상태일 때 예외 발생
+            }
+
+        } else {
+            throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND); // 멤버를 찾지 못한 경우 예외 처리
         }
     }
 

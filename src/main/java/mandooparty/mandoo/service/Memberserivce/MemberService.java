@@ -10,4 +10,6 @@ public interface MemberService {
 
     public MemberDTO.MemberLoginResponseDto loginMember(MemberDTO.MemberLoginDto request);
     MemberDTO.MemberLoginResponseDto logoutMember(MemberDTO.MemberLogoutDto request);
+    MemberDTO.MemberSignUpResponseDto changePassword(Long memberId, String newPassword);
+    public void deleteMember(Long memberId);
 }

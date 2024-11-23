@@ -37,7 +37,15 @@ public class MemberDTO {
         private String email;
         private String password;
     }
-
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberChangePasswordDto{
+        private String email;
+        private String password;
+        private String newPassword;
+    }
     @Builder
     @Getter
     @NoArgsConstructor

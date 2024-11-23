@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -41,10 +42,20 @@ public class Member extends BaseEntity {
     @Builder.Default
     private Integer likeSellPostCount = 0;
 
+    private LocalDateTime loginTime;
+
     @Builder.Default
     private Integer completedSellPostCount = 0;
 
     public void setLoginStatus(boolean isLogin) {
         this.isLogin = isLogin;
     }
+    public void setLoginTime(LocalDateTime loginTime) {
+        this.loginTime = loginTime;
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
 }
