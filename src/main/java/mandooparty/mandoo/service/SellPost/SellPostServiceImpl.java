@@ -172,6 +172,7 @@ public class SellPostServiceImpl implements SellPostService {
                     return SellImagePath.builder()
                             .path(filePath)
                             .sellPost(sellPost)
+                            .build();
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to save file: " + file.getOriginalFilename(), e);
                 }
@@ -216,3 +217,4 @@ public class SellPostServiceImpl implements SellPostService {
        return sellPostPage.map(SellPostConverter::sellPostGetResponse);
     }
 }
+

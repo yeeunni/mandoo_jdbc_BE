@@ -67,4 +67,5 @@ public class MemberDTO {
         private Boolean isLogin;
     }
 
+
 }

@@ -63,6 +63,8 @@ public class SellPostConverter {
                         .collect(Collectors.toList()))         // 경로를 리스트로 수집하여 반환
                 .build();
     }
+
+}
     public static SellPostDTO.SellPostResponseDto sellPostGetResponse(SellPost sellPost) {
         return SellPostDTO.SellPostResponseDto.builder()
                 .sellPostId(sellPost.getSellPostId())   // 게시글 ID 설정
@@ -87,3 +89,4 @@ public class SellPostConverter {
                 .build();
     }
 }
+

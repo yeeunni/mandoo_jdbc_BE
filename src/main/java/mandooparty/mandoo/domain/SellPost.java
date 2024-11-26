@@ -55,6 +55,15 @@ public class SellPost extends BaseEntity {
     @OneToMany(mappedBy = "sellPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SellImagePath> images = new ArrayList<>(); // SellImagePath와의 연관 관계 설정
 
+    @OneToMany(mappedBy = "sellPost",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Likes> likes=new ArrayList<>();
+
+    @OneToMany(mappedBy = "sellPost",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Comment> comments=new ArrayList<>();
+
+    @OneToMany(mappedBy = "sellPost",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<PostReport> postReports=new ArrayList<>();
+
     // 카테고리 설정 메서드
     public void setCategories(List<SellPostCategory> categories) {
         this.categories.clear();
@@ -76,11 +85,8 @@ public class SellPost extends BaseEntity {
     }
 
 
-
-
     // 업데이트 메서드
     public void update(String title, int price, String description, String city, String gu, String dong, List<SellPostCategory> categories) {
-
         this.title = title;
         this.price = price;
         this.description = description;
@@ -88,7 +94,6 @@ public class SellPost extends BaseEntity {
         this.gu = gu;
         this.dong = dong;
         setCategories(categories); // 카테고리 리스트 업데이트
-
         this.modifiedAt = LocalDateTime.now(); // 수정 시간 갱신
     }
 

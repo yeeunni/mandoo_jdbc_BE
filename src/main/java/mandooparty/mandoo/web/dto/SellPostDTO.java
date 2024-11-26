@@ -97,4 +97,6 @@ public class SellPostDTO {
         private Long sellPostId;
     }
 
+
 }
+

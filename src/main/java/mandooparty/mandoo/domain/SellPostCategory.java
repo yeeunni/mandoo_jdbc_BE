@@ -20,7 +20,7 @@ public class SellPostCategory {
     private Category category;        // 카테고리와의 관계
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "sellpostId", nullable = false)
     private SellPost sellPost;        // 게시물(SellPost)와의 관계
 

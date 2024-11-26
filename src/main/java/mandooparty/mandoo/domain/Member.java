@@ -52,6 +52,8 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SellPost> sellPosts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Likes> Likes=new ArrayList<>();
     public void setLoginStatus(boolean isLogin) {
         this.isLogin = isLogin;
     }
