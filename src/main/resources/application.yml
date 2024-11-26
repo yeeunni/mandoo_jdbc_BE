@@ -20,6 +20,5 @@ spring:
 
 
 upload:
-  path: /Users/kang-minyoung/uploads/images
-
+  path: "C:\\Users\\USER\\Desktop\\mandoo_image"
 

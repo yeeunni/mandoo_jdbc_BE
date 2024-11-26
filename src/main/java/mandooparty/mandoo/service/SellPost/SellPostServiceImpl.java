@@ -9,6 +9,8 @@ import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.*;
 import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -205,5 +207,12 @@ public class SellPostServiceImpl implements SellPostService {
             throw new GlobalException(GlobalErrorCode.POST_NOT_FOUND);
         }
         sellPostRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts (Pageable pageable) {//모든 게시물 최신순으로 조회
+       Page<SellPost> sellPostPage = sellPostRepository.findAllByOrderByCreatedAtDesc(pageable);
+       return sellPostPage.map(SellPostConverter::sellPostGetResponse);
     }
 }

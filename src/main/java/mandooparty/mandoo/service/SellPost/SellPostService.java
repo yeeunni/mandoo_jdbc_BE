@@ -1,6 +1,10 @@
 package mandooparty.mandoo.service.SellPost;
 
+import mandooparty.mandoo.domain.SellPost;
 import mandooparty.mandoo.web.dto.SellPostDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 
 public interface SellPostService {
@@ -15,4 +19,6 @@ public interface SellPostService {
     void deleteSellPost(Long id);
     // 게시물 업데이트
     SellPostDTO.SellPostResponseDto updateSellPost(Long postId, SellPostDTO.SellPostUpdateDto request);
+    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts (Pageable pageable);
+
 }

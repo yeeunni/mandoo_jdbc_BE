@@ -2,10 +2,13 @@ package mandooparty.mandoo.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import mandooparty.mandoo.apiPayload.ApiResponse;
+import mandooparty.mandoo.domain.SellPost;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.service.SellPost.CategoryService;
 import mandooparty.mandoo.service.SellPost.SellPostService;
 import mandooparty.mandoo.web.dto.SellPostDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -69,7 +72,17 @@ public class SellPostController {
         return ApiResponse.onSuccess(response);
     }
 
+    @GetMapping("/recent") //최신 게시물 조회
+    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> getSellPosts(@RequestParam int page) {
+        try {
+            int pageSize = 9; // 한 페이지에 가져올 게시글 수
+            PageRequest pageRequest = PageRequest.of(page, pageSize);
+            return ApiResponse.onSuccess(sellPostService.getRecentSellPosts(pageRequest));
+        } catch (GlobalException e) {
+            return ApiResponse.onFailure(e.getErrorCode(), null);
+        }
 
+    }
 
 
 }
