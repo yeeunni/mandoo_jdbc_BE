@@ -1,46 +1,22 @@
 package mandooparty.mandoo.domain;
-
-import jakarta.persistence.*;
-import lombok.*;
-import mandooparty.mandoo.domain.common.BaseEntity;
 import mandooparty.mandoo.domain.enums.CommentStatus;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// Removed: @Entity
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-// Removed: @Table(name = "comment")
-public class Comment extends BaseEntity {
+public class Comment {
 
-    // Removed: @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // 댓글 ID
+    private String content;  // 댓글 내용
+    private CommentStatus commentStatus;  // 댓글 상태
 
-    @Setter
-    private String content;
+    private Long memberId;  // 작성자 (Member 객체)
+    private Long sellPostId;  // 게시물 (SellPost 객체)
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private CommentStatus commentStatus;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId", nullable = false)
-    private Member member;          // ìì±ì (Memberì ì°ê´ ê´ê³ ì¤ì )
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sellpostId", nullable = false)
-    private SellPost sellPost;        // ê²ìë¬¼(SellPost)ìì ê´ê³
-
-    @OneToMany(mappedBy = "comment",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<CommentReport> commentReports=new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parentCommentId") // ë¶ëª¨ ëê¸ ID ì ì¥
-    private Comment parentComment; // ë¶ëª¨ ëê¸ (ëµê¸ì ê²½ì°)
+    private Long parentCommentId;  // 부모 댓글 (답글의 경우)
 
 }

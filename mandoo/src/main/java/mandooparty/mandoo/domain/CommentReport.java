@@ -1,30 +1,17 @@
 package mandooparty.mandoo.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
-import mandooparty.mandoo.domain.common.BaseEntity;
 
-// Removed: @Entity
-@Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// Removed: @Table(name = "commentReport")
-public class CommentReport extends BaseEntity {
+public class CommentReport {
 
-    // Removed: @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // 신고 ID
+    private Integer commentReportCount;  // 신고 횟수
 
-    private Integer commentReportCount;
+    private Long memberId;  // 작성자 (Member 객체)
+    private Long commentId;  // 댓글 (Comment 객체)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId", nullable = false)
-    private Member member;          // ìì±ì (Memberì ì°ê´ ê´ê³ ì¤ì )
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commentId", nullable = false)
-    private Comment comment;        // ëê¸(comment)ìì ê´ê³
 }

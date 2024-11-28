@@ -1,5 +1,6 @@
 package mandooparty.mandoo.repository;
 
+
 import mandooparty.mandoo.domain.SellPost;
 import mandooparty.mandoo.domain.enums.SellPostStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -7,12 +8,14 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.PageImpl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -24,6 +27,42 @@ import java.util.Optional;
 public class SellPostRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public SellPost findById(Long sellPostId)
+    {
+        String sql="SELECT s.* FROM sellpost AS s WHERE s.sell_post_id=?";
+        try {
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    new Object[]{sellPostId},
+                    new BeanPropertyRowMapper<>(SellPost.class)  // 수정된 부분
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;  // 결과가 없으면 Optional.empty() 반환
+        }
+    }
+
+    public boolean insertSellPost(SellPost sellPost) {
+        // SellPost 필드 추출
+        String title = sellPost.getTitle();
+        Integer price = sellPost.getPrice();
+        String description = sellPost.getDescription();
+        String city = sellPost.getCity();
+        String gu = sellPost.getGu();
+        String dong = sellPost.getDong();
+        Long memberId = sellPost.getMember().getId();
+        LocalDateTime createdAt = sellPost.getCreatedAt();
+        LocalDateTime modifiedAt = sellPost.getModifiedAt();
+
+        // SQL 수정
+        String sql = "INSERT INTO sellpost (title, price, description, city, gu, dong, member_id, created_at, modified_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // 매개변수 전달 수정
+        int rowsAffected = jdbcTemplate.update(sql, title, price, description, city, gu, dong, memberId, createdAt, modifiedAt);
+        return rowsAffected > 0;
+    }
+
     public Optional<SellPost> findByTitle(String title)
     {
         String sql="SELECT s.* FROM sellpost AS s WHERE s.title=?";
@@ -139,6 +178,33 @@ public class SellPostRepository {
         return new PageImpl<>(sellPosts, pageable, totalRecords);
     }
 
+
+    public Optional<SellPost> existsById(Long sellPostId)
+    {
+        String sql = "SELECT s.* FROM sellpost AS s WHERE s.sell_post_id = ?";
+        try {
+            SellPost sellPost = jdbcTemplate.queryForObject(
+                    sql,
+                    new Object[]{sellPostId},
+                    new BeanPropertyRowMapper<>(SellPost.class)
+            );
+            return Optional.ofNullable(sellPost);  // member가 null이면 Optional.empty() 반환
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
+        }
+    }
+    public boolean deleteById(Long sellPostId) {
+        String sql = "DELETE FROM sellpost WHERE sell_post_id = ?"; // 테이블 및 열 이름을 스키마에 맞게 수정
+        int rowsAffected = jdbcTemplate.update(sql, new Object[]{sellPostId});
+        return rowsAffected > 0; // 영향을 받은 행이 있으면 true, 없으면 false 반환
+    }
+
+
+    public boolean deleteBySellPost(SellPost sellPost) {
+        String sql = "DELETE FROM sellpost AS s WHERE s.sell_post_id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, sellPost.getSellPostId());
+        return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
+    }
 
 }
 

@@ -1,22 +1,19 @@
 package mandooparty.mandoo.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
 
-// Removed: @Entity
-@Getter
-@Builder
+@Data
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
-// Removed: @Table(name = "category")
 public class Category {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;     // ì¹´íê³ ë¦¬ ID
-
-    private String name;         // ì¹´íê³ ë¦¬ ì´ë¦
+    private Long categoryId;  // 카테고리 ID
+    private String name;      // 카테고리 이름
 
     public void setId(long categoryId) {
+        this.categoryId = categoryId;
     }
+
 }

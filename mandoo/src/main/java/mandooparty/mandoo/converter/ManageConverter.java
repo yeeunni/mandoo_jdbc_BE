@@ -19,8 +19,8 @@ public class ManageConverter {
                 .writeSellPostCount(member.getWriteSellPostCount())
                 .likeSellPostCount(member.getLikeSellPostCount())
                 .completedSellPostCount(member.getCompletedSellPostCount())
-                .createdAt(member.getCreatedAt())
-                .modifiedAt(member.getUpdateAt())
+                .createdAt(member.getCreated_at())
+                .modifiedAt(member.getUpdated_at())
                 .build();
     }
 

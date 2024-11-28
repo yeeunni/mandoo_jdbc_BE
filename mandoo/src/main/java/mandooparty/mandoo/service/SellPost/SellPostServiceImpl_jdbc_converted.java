@@ -28,10 +28,6 @@ public class SellPostServiceImpl implements SellPostService {
 
     private final SellPostRepository sellPostRepository;
     private final SellPostConverter sellPostConverter;
-    private final MemberRepository memberRepository;
-    private final SellPostCategoryRepository sellPostCategoryRepository;
-    private final CategoryRepository categoryRepository;
-    private final SellImagePathRepository sellImagePathRepository;
     private final JdbcTemplate jdbcTemplate;
 
     @Value("${upload.path}")
@@ -39,35 +35,55 @@ public class SellPostServiceImpl implements SellPostService {
 
     @Override
     public SellPostDTO.SellPostResponseDto SellPostcreate(SellPostDTO.SellPostCreateDto request) {
-
         if (request.getMemberId() == null) {
             throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND);
         }
 
-        Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND));
+        // 멤버 조회
+        String findMemberSql = "SELECT * FROM member WHERE id = ?";
+        Member member = jdbcTemplate.queryForObject(findMemberSql, new Object[]{request.getMemberId()}, memberRowMapper);
 
+        if (member == null) {
+            throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        // SellPost 생성
         SellPost sellPost = sellPostConverter.sellPostCreateDto(request, member);
 
-        List<SellPostCategory> sellPostCategories = request.getCategoryIds().stream()
-                .map(categoryId -> {
-                    Category category = categoryRepository.findById(categoryId)
-                            .orElseThrow(() -> new GlobalException(GlobalErrorCode.CATEGORY_NOT_FOUND));
-                    return SellPostCategory.builder()
-                            .sellPost(sellPost)
-                            .category(category)
-                            .build();
-                })
-                .collect(Collectors.toList());
-        // SellPostì ì¹´íê³ ë¦¬ ì¤ì 
-        sellPost.setCategories(sellPostCategories);
+        // SellPost 데이터베이스 삽입
+        String insertPostSql = "INSERT INTO sellpost (title, price, description, city, gu, dong, member_id, created_at, modified_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(insertPostSql,
+                sellPost.getTitle(),
+                sellPost.getPrice(),
+                sellPost.getDescription(),
+                sellPost.getCity(),
+                sellPost.getGu(),
+                sellPost.getDong(),
+                member.getId(),
+                sellPost.getCreatedAt(),
+                sellPost.getModifiedAt()
+        );
 
+        // 카테고리 처리
+        List<Long> categoryIds = Optional.ofNullable(request.getCategoryIds()).orElse(Collections.emptyList());
+        for (Long categoryId : categoryIds) {
+            String findCategorySql = "SELECT * FROM category WHERE category_id = ?";
+            Category category = jdbcTemplate.queryForObject(findCategorySql, new Object[]{categoryId}, categoryRowMapper);
+
+            if (category == null) {
+                throw new GlobalException(GlobalErrorCode.CATEGORY_NOT_FOUND);
+            }
+
+            String insertCategorySql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+            jdbcTemplate.update(insertCategorySql, sellPost.getSellPostId(), categoryId);
+        }
+
+        // 이미지 처리
         List<MultipartFile> images = Optional.ofNullable(request.getImages()).orElse(Collections.emptyList());
-
         if (!images.isEmpty()) {
-            List<SellImagePath> imagePaths = images.stream().map(file -> {
+            for (MultipartFile file : images) {
                 try {
-                    // íì¼ ì ì¥
                     String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
                     String filePath = Paths.get(uploadPath, fileName).toString();
 
@@ -77,126 +93,63 @@ public class SellPostServiceImpl implements SellPostService {
                     }
                     file.transferTo(new File(filePath));
 
-                    // SellImagePath ìì±
-                    return SellImagePath.builder()
-                            .path(filePath)
-                            .sellPost(sellPost) // ì°ê´ ì¤ì 
-                            .build();
+                    String insertImageSql = "INSERT INTO sellimagepath (path, sellpost_id) VALUES (?, ?)";
+                    jdbcTemplate.update(insertImageSql, filePath, sellPost.getSellPostId());
 
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to save file: " + file.getOriginalFilename(), e);
                 }
-            }).collect(Collectors.toList());
-
-
-            // ì´ë¯¸ì§ ì ì¥
-            sellPost.setImages(imagePaths); // SellPostì ì°ê²°
+            }
         }
 
-        // JDBC를 통한 데이터 저장
-        String sql = "INSERT INTO sellpost (title, price, description, city, gu, dong, created_at, modified_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                sellPost.getTitle(),
-                sellPost.getPrice(),
-                sellPost.getDescription(),
-                sellPost.getCity(),
-                sellPost.getGu(),
-                sellPost.getDong(),
-                sellPost.getCreatedAt(),
-                sellPost.getModifiedAt()
-        );
-
-
-        // ìëµ DTO ìì±
-        SellPostDTO.SellPostResponseDto responseDto = SellPostConverter.sellPostResponseDto(sellPost);
-
-        return responseDto;
-
+        return SellPostConverter.sellPostResponseDto(sellPost);
     }
 
     @Override
     public SellPostDTO.SellPostResponseDto getSellPostById(Long id) {
-        // ID로 게시물 조회
         String sql = "SELECT * FROM sellpost WHERE sell_post_id = ?";
-        List<SellPost> results = jdbcTemplate.query(sql, sellPostRowMapper, id);
+        SellPost sellPost = jdbcTemplate.queryForObject(sql, new Object[]{id}, sellPostRowMapper);
 
-        // 결과 확인
-        if (results.isEmpty()) {
+        if (sellPost == null) {
             throw new GlobalException(GlobalErrorCode.POST_NOT_FOUND);
         }
 
-        SellPost sellPost = results.get(0);
-
-        // 엔티티를 DTO로 변환 후 반환
         return SellPostConverter.sellPostResponseDto(sellPost);
     }
 
-
-
-    private final RowMapper<SellPost> sellPostRowMapper = (rs, rowNum) -> {
-        SellPost sellPost = new SellPost();
-        sellPost.setId(rs.getLong("sell_post_id"));
-        sellPost.setTitle(rs.getString("title"));
-        sellPost.setDescription(rs.getString("description"));
-        sellPost.setPrice(rs.getInt("price"));
-        sellPost.setCity(rs.getString("city"));
-        sellPost.setGu(rs.getString("gu"));
-        sellPost.setDong(rs.getString("dong"));
-        sellPost.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        sellPost.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-        return sellPost;
-    };
-
-    private final RowMapper<Category> categoryRowMapper = (rs, rowNum) -> {
-        Category category = null;
-//        category = new Category();
-        category.setId(rs.getLong("category_id"));
-        category.setName(rs.getString("name"));
-        return category;
-    };
-
-
     @Override
     public SellPostDTO.SellPostResponseDto updateSellPost(Long sellPostId, SellPostDTO.SellPostUpdateDto request) {
-        // 게시물 조회 쿼리
         String findPostSql = "SELECT * FROM sellpost WHERE sell_post_id = ?";
-        List<SellPost> results = jdbcTemplate.query(findPostSql, sellPostRowMapper, sellPostId);
+        SellPost sellPost = jdbcTemplate.queryForObject(findPostSql, new Object[]{sellPostId}, sellPostRowMapper);
 
-        if (results.isEmpty()) {
+        if (sellPost == null) {
             throw new GlobalException(GlobalErrorCode.POST_NOT_FOUND);
         }
 
-        SellPost sellPost = results.get(0);
-
         // 카테고리 처리
         List<Long> categoryIds = Optional.ofNullable(request.getCategoryIds()).orElse(Collections.emptyList());
-        List<SellPostCategory> categories = categoryIds.stream()
-                .map(categoryId -> {
-                    String findCategorySql = "SELECT * FROM category WHERE category_id = ?";
-                    List<Category> categoryResults = jdbcTemplate.query(findCategorySql, categoryRowMapper, categoryId);
+        String deleteCategorySql = "DELETE FROM sellpostCategory WHERE sellpost_id = ?";
+        jdbcTemplate.update(deleteCategorySql, sellPostId);
 
-                    if (categoryResults.isEmpty()) {
-                        throw new GlobalException(GlobalErrorCode.CATEGORY_NOT_FOUND);
-                    }
+        for (Long categoryId : categoryIds) {
+            String findCategorySql = "SELECT * FROM category WHERE category_id = ?";
+            Category category = jdbcTemplate.queryForObject(findCategorySql, new Object[]{categoryId}, categoryRowMapper);
 
-                    return SellPostCategory.builder()
-                            .sellPost(sellPost)
-                            .category(categoryResults.get(0))
-                            .build();
-                }).collect(Collectors.toList());
+            if (category == null) {
+                throw new GlobalException(GlobalErrorCode.CATEGORY_NOT_FOUND);
+            }
 
-        sellPost.setCategories(categories);
+            String insertCategorySql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+            jdbcTemplate.update(insertCategorySql, sellPostId, categoryId);
+        }
 
         // 이미지 처리
         List<MultipartFile> images = Optional.ofNullable(request.getImages()).orElse(Collections.emptyList());
-        if (!images.isEmpty()) {
-            // 기존 이미지 삭제
-            String deleteImageSql = "DELETE FROM sellimagepath WHERE sellpost_id = ?";
-            jdbcTemplate.update(deleteImageSql, sellPostId);
+        String deleteImageSql = "DELETE FROM sellimagepath WHERE sellpost_id = ?";
+        jdbcTemplate.update(deleteImageSql, sellPostId);
 
-            // 새 이미지 추가
-            List<SellImagePath> imagePaths = images.stream().map(file -> {
+        if (!images.isEmpty()) {
+            for (MultipartFile file : images) {
                 try {
                     String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
                     String filePath = Paths.get(uploadPath, fileName).toString();
@@ -210,19 +163,13 @@ public class SellPostServiceImpl implements SellPostService {
                     String insertImageSql = "INSERT INTO sellimagepath (path, sellpost_id) VALUES (?, ?)";
                     jdbcTemplate.update(insertImageSql, filePath, sellPostId);
 
-                    return SellImagePath.builder()
-                            .path(filePath)
-                            .sellPost(sellPost)
-                            .build();
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to save file: " + file.getOriginalFilename(), e);
                 }
-            }).collect(Collectors.toList());
-
-            sellPost.setImages(imagePaths);
+            }
         }
 
-        // 필드 업데이트
+        // 게시물 업데이트
         String updatePostSql = "UPDATE sellpost SET title = ?, price = ?, description = ?, city = ?, gu = ?, dong = ? WHERE sell_post_id = ?";
         jdbcTemplate.update(updatePostSql,
                 request.getTitle(),
@@ -234,24 +181,64 @@ public class SellPostServiceImpl implements SellPostService {
                 sellPostId
         );
 
-        // 업데이트된 데이터를 DTO로 변환 후 반환
         return SellPostConverter.sellPostResponseDto(sellPost);
     }
 
-
-
     @Override
     public void deleteSellPost(Long id) {
-        if (!sellPostRepository.existsById(id)) {
+        String sql = "DELETE FROM sellpost WHERE sell_post_id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, id);
+        if (rowsAffected == 0) {
             throw new GlobalException(GlobalErrorCode.POST_NOT_FOUND);
         }
-        sellPostRepository.deleteById(id);
     }
 
     @Override
-    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts (Pageable pageable) {//ëª¨ë  ê²ìë¬¼ ìµì ìì¼ë¡ ì¡°í
-       Page<SellPost> sellPostPage = sellPostRepository.findAllByOrderByCreatedAtDesc(pageable);
-       return sellPostPage.map(SellPostConverter::sellPostGetResponse);
-    }
-}
+    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts(Pageable pageable) {
+        String sql = "SELECT * FROM sellpost ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        int limit = pageable.getPageSize();
+        int offset = pageable.getPageNumber() * limit;
 
+        List<SellPost> sellPosts = jdbcTemplate.query(sql, new Object[]{limit, offset}, sellPostRowMapper);
+
+        String countSql = "SELECT COUNT(*) FROM sellpost";
+        int totalElements = jdbcTemplate.queryForObject(countSql, Integer.class);
+
+        return new PageImpl<>(
+                sellPosts.stream()
+                        .map(SellPostConverter::sellPostResponseDto)
+                        .collect(Collectors.toList()),
+                pageable,
+                totalElements
+        );
+    }
+
+    private final RowMapper<SellPost> sellPostRowMapper = (rs, rowNum) -> {
+        SellPost sellPost = new SellPost();
+        sellPost.setId(rs.getLong("sell_post_id"));
+        sellPost.setTitle(rs.getString("title"));
+        sellPost.setDescription(rs.getString("description"));
+        sellPost.setPrice(rs.getInt("price"));
+        sellPost.setCity(rs.getString("city"));
+        sellPost.setGu(rs.getString("gu"));
+        sellPost.setDong(rs.getString("dong"));
+        sellPost.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        sellPost.setModifiedAt(rs.getTimestamp("modified_at").toLocalDateTime());
+        return sellPost;
+    };
+
+    private final RowMapper<Member> memberRowMapper = (rs, rowNum) -> {
+        Member member = new Member();
+        member.setId(rs.getLong("member_id"));
+        member.setEmail(rs.getString("email"));
+        // 기타 필드 매핑
+        return member;
+    };
+
+    private final RowMapper<Category> categoryRowMapper = (rs, rowNum) -> {
+        Category category = new Category();
+        category.setId(rs.getLong("category_id"));
+        category.setName(rs.getString("name"));
+        return category;
+    };
+}
