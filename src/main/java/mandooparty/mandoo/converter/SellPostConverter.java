@@ -7,7 +7,6 @@ import mandooparty.mandoo.domain.SellPostCategory;
 import mandooparty.mandoo.domain.SellImagePath;
 import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

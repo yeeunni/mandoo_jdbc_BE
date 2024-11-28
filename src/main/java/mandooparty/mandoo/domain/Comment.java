@@ -20,8 +20,10 @@ public class Comment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     private String content;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private CommentStatus commentStatus;
 
@@ -36,4 +38,9 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "comment",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CommentReport> commentReports=new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentCommentId") // 부모 댓글 ID 저장
+    private Comment parentComment; // 부모 댓글 (답글의 경우)
+
 }

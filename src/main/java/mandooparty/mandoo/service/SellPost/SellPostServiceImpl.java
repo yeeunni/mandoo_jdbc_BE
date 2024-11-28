@@ -89,6 +89,7 @@ public class SellPostServiceImpl implements SellPostService {
                 }
             }).collect(Collectors.toList());
 
+
             // 이미지 저장
             sellPost.setImages(imagePaths); // SellPost와 연결
 
@@ -190,7 +191,6 @@ public class SellPostServiceImpl implements SellPostService {
                 request.getCity(),
                 request.getGu(),
                 request.getDong(),
-
                 categories
         );
 
