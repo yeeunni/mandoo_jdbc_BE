@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
+import javax.swing.text.html.Option;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,17 +34,18 @@ public class SellPostRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public SellPost findById(Long sellPostId)
+    public Optional<SellPost> findById(Long sellPostId)
     {
         String sql="SELECT s.* FROM sellpost AS s WHERE s.sell_post_id=?";
         try {
-            return jdbcTemplate.queryForObject(
+            SellPost sellPost= jdbcTemplate.queryForObject(
                     sql,
                     new Object[]{sellPostId},
                     new BeanPropertyRowMapper<>(SellPost.class)  // 수정된 부분
             );
+            return Optional.ofNullable(sellPost);
         } catch (EmptyResultDataAccessException e) {
-            return null;  // 결과가 없으면 Optional.empty() 반환
+            return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
         }
     }
 

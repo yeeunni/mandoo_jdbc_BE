@@ -1,29 +1,18 @@
 package mandooparty.mandoo.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
-import mandooparty.mandoo.domain.common.BaseEntity;
 
-@Entity
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "postReport")
-public class PostReport extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PostReport {
+
     private Long id;
-
-    private Integer postReportCount;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId", nullable = false)
-    private Member member;          // 작성자 (Member와 연관 관계 설정)
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sellpostId", nullable = false)
-    private SellPost sellPost;        // 게시물과의 관계
+    private Integer post_report_count;
+    private Long member_id;      // Member의 ID
+    private Long sell_post_id;    // SellPost의 ID
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 }

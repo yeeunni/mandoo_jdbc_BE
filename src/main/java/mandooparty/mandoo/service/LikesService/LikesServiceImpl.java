@@ -34,10 +34,10 @@ public class LikesServiceImpl implements LikesService{
                 throw new GlobalException(GlobalErrorCode.DUPLICATE_LIKES);
             }else{
                 Likes likes=Likes.builder()
-                        .member(member)
-                        .sellPost(sellPost)
+                        .member_id(member.getId())
+                        .sell_post_id(sellPost.getSellPostId())
                         .build();
-                likesRepository.save(likes);
+                likesRepository.insertLikes(likes);
                 return likes;
             }
         }
