@@ -1,6 +1,7 @@
 package mandooparty.mandoo.web.dto;
 
 import lombok.*;
+import mandooparty.mandoo.domain.enums.CommentStatus;
 
 @Data
 public class ReportDTO {

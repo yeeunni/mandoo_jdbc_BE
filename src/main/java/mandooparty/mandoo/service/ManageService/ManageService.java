@@ -14,7 +14,9 @@ public interface ManageService {
 
     public List<ManageDTO.ManageDashBoardDateViewDto> getDateView();
 
-    public List<Member> getMember();
+
+    public List<Member> getMember(String order);
+
 
     public List<ManageDTO.CommentReportDto> getCommentReport(String order);
 

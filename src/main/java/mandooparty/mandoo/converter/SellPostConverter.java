@@ -64,7 +64,7 @@ public class SellPostConverter {
                 .build();
     }
 
-}
+
     public static SellPostDTO.SellPostResponseDto sellPostGetResponse(SellPost sellPost) {
         return SellPostDTO.SellPostResponseDto.builder()
                 .sellPostId(sellPost.getSellPostId())   // 게시글 ID 설정

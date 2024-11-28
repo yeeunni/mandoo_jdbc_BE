@@ -34,8 +34,9 @@ public class ManageController {
     }
 
     @GetMapping("/member")//관리자 페이지 회원관리
-    public ApiResponse<List<ManageDTO.ManageMemberDto>> ManageMember(){
-        List<Member> memberList=manageService.getMember();
+    public ApiResponse<List<ManageDTO.ManageMemberDto>> ManageMember(@RequestParam(value = "order", required = false, defaultValue = "id") String order){
+        List<Member> memberList=manageService.getMember(order);
+
         List<ManageDTO.ManageMemberDto> manageMemberDtoList=new ArrayList<>();
         for(Member member : memberList){//domain -> dto로 변경
             manageMemberDtoList.add(ManageConverter.ManageMemberDto(member));
@@ -71,7 +72,7 @@ public class ManageController {
     }
 
     @DeleteMapping("/member")
-    public ApiResponse deleteMember(@PathVariable Long memberId)
+    public ApiResponse deleteMember(@RequestParam("memberId") Long memberId)
     {
         try{
             manageService.deleteMember(memberId);

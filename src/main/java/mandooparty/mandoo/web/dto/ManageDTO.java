@@ -27,6 +27,7 @@ public class ManageDTO {
     @AllArgsConstructor
     public static class ManageDashBoardCategoryRatioDto{
         private String name;
+        private Integer ratio;
         private Integer categoryCount;
     }
 
@@ -86,6 +87,7 @@ public class ManageDTO {
         private String content;
         private CommentStatus status;
         private Long memberId;
+        private Long writerId;
         private Long sellPostId;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
@@ -102,6 +104,9 @@ public class ManageDTO {
     public static class PostReportDto{
         private Long postReportId;
         private Long sellPostId;
+        private String title;
+        private String content;
+        private Long writerId;
         private Long memberId;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
