@@ -1,27 +1,19 @@
 package mandooparty.mandoo.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Getter
+@Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "sellpostcategory")
+// Removed: @Table(name = "sellpostcategory")
 public class SellPostCategory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sellPostCategoryId;  // SellPost와 Category의 중간 테이블 ID
+    private Long sell_post_category_id;  // SellPostì Categoryì ì¤ê° íì´ë¸ ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoryId", nullable = false)
-    private Category category;        // 카테고리와의 관계
+    private Long category_id;        // ì¹´íê³ ë¦¬ìì ê´ê³
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "sellpostId", nullable = false)
-    private SellPost sellPost;        // 게시물(SellPost)와의 관계
+    private Long sell_post_id;        // ê²ìë¬¼(SellPost)ìì ê´ê³
+
 
 }

@@ -1,8 +1,6 @@
 package mandooparty.mandoo.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
-import mandooparty.mandoo.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
 

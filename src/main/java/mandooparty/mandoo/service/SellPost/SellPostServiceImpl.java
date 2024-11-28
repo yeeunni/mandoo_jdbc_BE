@@ -61,8 +61,8 @@ public class SellPostServiceImpl implements SellPostService {
                 sellPost.getGu(),
                 sellPost.getDong(),
                 member.getId(),
-                sellPost.getCreatedAt(),
-                sellPost.getModifiedAt()
+                sellPost.getCreated_at(),
+                sellPost.getUpdated_at()
         );
 
         // 카테고리 처리
@@ -76,7 +76,7 @@ public class SellPostServiceImpl implements SellPostService {
             }
 
             String insertCategorySql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
-            jdbcTemplate.update(insertCategorySql, sellPost.getSellPostId(), categoryId);
+            jdbcTemplate.update(insertCategorySql, sellPost.getSell_post_id(), categoryId);
         }
 
         // 이미지 처리
@@ -94,7 +94,7 @@ public class SellPostServiceImpl implements SellPostService {
                     file.transferTo(new File(filePath));
 
                     String insertImageSql = "INSERT INTO sellimagepath (path, sellpost_id) VALUES (?, ?)";
-                    jdbcTemplate.update(insertImageSql, filePath, sellPost.getSellPostId());
+                    jdbcTemplate.update(insertImageSql, filePath, sellPost.getSell_post_id());
 
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to save file: " + file.getOriginalFilename(), e);
@@ -222,8 +222,8 @@ public class SellPostServiceImpl implements SellPostService {
         sellPost.setCity(rs.getString("city"));
         sellPost.setGu(rs.getString("gu"));
         sellPost.setDong(rs.getString("dong"));
-        sellPost.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        sellPost.setModifiedAt(rs.getTimestamp("modified_at").toLocalDateTime());
+        sellPost.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());
+        sellPost.setUpdated_at(rs.getTimestamp("modified_at").toLocalDateTime());
         return sellPost;
     };
 
