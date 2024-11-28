@@ -1,14 +1,24 @@
 package mandooparty.mandoo.repository;
 
 
-import jakarta.persistence.Tuple;
 import mandooparty.mandoo.domain.Category;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public class CategoryRepository  {
+
+    private JdbcTemplate jdbcTemplate;
+
+    public List<Category> findAll()
+    {
+        String sql = "SELECT * FROM category";
+
+        // Execute the query and map results to Category objects
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class));
+    }
+
 }
