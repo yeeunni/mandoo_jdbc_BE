@@ -1,17 +1,10 @@
 package mandooparty.mandoo.repository;
 
-import mandooparty.mandoo.domain.Comment;
 import mandooparty.mandoo.domain.Member;
-import mandooparty.mandoo.domain.PostReport;
-import mandooparty.mandoo.domain.enums.MemberStatus;
-import mandooparty.mandoo.web.dto.MemberDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -44,7 +37,7 @@ public class MemberRepository{
         String email = member.getEmail();
         String password = member.getPassword();
         String nickname = member.getNickname();
-        MemberStatus status = member.getStatus();
+        Integer status = member.getStatus();
         LocalDateTime createdAt=member.getCreated_at();
         LocalDateTime updatedAt=member.getUpdated_at();
         String sql = "INSERT INTO member (email, password, nickname, status,created_at,updated_at) " +

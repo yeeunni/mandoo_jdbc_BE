@@ -1,20 +1,14 @@
 package mandooparty.mandoo.repository;
 
-import jakarta.persistence.Tuple;
 import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.SellPost;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import mandooparty.mandoo.domain.enums.SellPostStatus;
-import org.hibernate.sql.results.internal.TupleImpl;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.PageImpl;
 import java.sql.ResultSet;
@@ -25,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
-import javax.swing.text.html.Option;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,9 +50,9 @@ public class SellPostRepository {
         String city = sellPost.getCity();
         String gu = sellPost.getGu();
         String dong = sellPost.getDong();
-        Long memberId = sellPost.getMember().getId();
-        LocalDateTime createdAt = sellPost.getCreatedAt();
-        LocalDateTime modifiedAt = sellPost.getModifiedAt();
+        Long memberId = sellPost.getMember_id();
+        LocalDateTime createdAt = sellPost.getCreated_at();
+        LocalDateTime modifiedAt = sellPost.getUpdated_at();
 
         // SQL 수정
         String sql = "INSERT INTO sell_post (title, price, description, city, gu, dong, member_id, created_at, modified_at) " +
@@ -69,6 +62,13 @@ public class SellPostRepository {
         int rowsAffected = jdbcTemplate.update(sql, title, price, description, city, gu, dong, memberId, createdAt, modifiedAt);
         return rowsAffected > 0;
     }
+
+    public boolean insertSellPostCategory(Long sellPostId, Long categoryId) {
+        String sql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+        int rowsAffected = jdbcTemplate.update(sql, sellPostId, categoryId);
+        return rowsAffected > 0;
+    }
+
 
     public Optional<SellPost> findByTitle(String title)
     {
@@ -171,8 +171,8 @@ public class SellPostRepository {
             @Override
             public SellPost mapRow(ResultSet rs, int rowNum) throws SQLException {
                 SellPost sellPost = SellPost.builder()
-                                .sellPostId(rs.getLong("id"))
-                                .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                                .sell_post_id(rs.getLong("id"))
+                                .created_at(rs.getTimestamp("created_at").toLocalDateTime())
                                 .title(rs.getString("title"))
                                 .description(rs.getString("description"))
                                 .build();
@@ -209,7 +209,7 @@ public class SellPostRepository {
 
     public boolean deleteBySellPost(SellPost sellPost) {
         String sql = "DELETE FROM sellpost AS s WHERE s.sell_post_id = ?";
-        int rowsAffected = jdbcTemplate.update(sql, sellPost.getSellPostId());
+        int rowsAffected = jdbcTemplate.update(sql, sellPost.getSell_post_id());
         return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
     }
 

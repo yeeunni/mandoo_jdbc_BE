@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import mandooparty.mandoo.domain.SellPost;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -63,6 +61,7 @@ public class SellPostDTO {
         private String city;
         private String gu;
         private String dong;
+        private Integer status;
         private Long memberId;
         private Integer likeCount;
         private Integer commentCount;

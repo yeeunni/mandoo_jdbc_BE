@@ -21,4 +21,11 @@ public class CategoryRepository  {
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class));
     }
 
+    public boolean insertSellPostCategory(Long sellPostId, Long categoryId) {
+        String sql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+        int rowsAffected = jdbcTemplate.update(sql, sellPostId, categoryId);
+        return rowsAffected > 0;
+    }
+
+
 }

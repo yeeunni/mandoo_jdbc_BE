@@ -21,7 +21,7 @@ public class MemberConverter {
                 .email(member.getEmail())
                 .password(member.getPassword())
                 .nickname(member.getNickname())
-                .status(String.valueOf(member.getStatus()))
+                .status(member.getStatus())
                 .build();
     }
     public static MemberDTO.MemberLoginDto memberLoginDto(String email,String password){

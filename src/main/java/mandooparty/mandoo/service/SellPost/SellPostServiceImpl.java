@@ -9,9 +9,9 @@ import mandooparty.mandoo.repository.*;
 import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SellPostServiceImpl implements SellPostService {
 
+    private final MemberRepository memberRepository;
     private final SellPostRepository sellPostRepository;
     private final SellPostConverter sellPostConverter;
     private final JdbcTemplate jdbcTemplate;
@@ -39,31 +40,18 @@ public class SellPostServiceImpl implements SellPostService {
             throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND);
         }
 
-        // 멤버 조회
-        String findMemberSql = "SELECT * FROM member WHERE id = ?";
-        Member member = jdbcTemplate.queryForObject(findMemberSql, new Object[]{request.getMemberId()}, memberRowMapper);
-
-        if (member == null) {
-            throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND);
-        }
+        // 멤버 조회 (레포지토리 사용)
+        Optional<Member> memberOptional = memberRepository.findById(request.getMemberId());
+        Member member = memberOptional.orElseThrow(() -> new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND));
 
         // SellPost 생성
         SellPost sellPost = sellPostConverter.sellPostCreateDto(request, member);
 
-        // SellPost 데이터베이스 삽입
-        String insertPostSql = "INSERT INTO sellpost (title, price, description, city, gu, dong, member_id, created_at, modified_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(insertPostSql,
-                sellPost.getTitle(),
-                sellPost.getPrice(),
-                sellPost.getDescription(),
-                sellPost.getCity(),
-                sellPost.getGu(),
-                sellPost.getDong(),
-                member.getId(),
-                sellPost.getCreated_at(),
-                sellPost.getUpdated_at()
-        );
+        // 게시물 데이터 삽입 (레포지토리 사용)
+        boolean isInserted = sellPostRepository.insertSellPost(sellPost);
+        if (!isInserted) {
+            throw new RuntimeException("Failed to insert SellPost into the database.");
+        }
 
         // 카테고리 처리
         List<Long> categoryIds = Optional.ofNullable(request.getCategoryIds()).orElse(Collections.emptyList());
@@ -215,7 +203,7 @@ public class SellPostServiceImpl implements SellPostService {
 
     private final RowMapper<SellPost> sellPostRowMapper = (rs, rowNum) -> {
         SellPost sellPost = new SellPost();
-        sellPost.setId(rs.getLong("sell_post_id"));
+        sellPost.setSell_post_id(rs.getLong("sell_post_id"));
         sellPost.setTitle(rs.getString("title"));
         sellPost.setDescription(rs.getString("description"));
         sellPost.setPrice(rs.getInt("price"));
@@ -237,7 +225,7 @@ public class SellPostServiceImpl implements SellPostService {
 
     private final RowMapper<Category> categoryRowMapper = (rs, rowNum) -> {
         Category category = new Category();
-        category.setId(rs.getLong("category_id"));
+        category.setCategory_id(rs.getLong("category_id"));
         category.setName(rs.getString("name"));
         return category;
     };

@@ -35,7 +35,7 @@ public class LikesServiceImpl implements LikesService{
             }else{
                 Likes likes=Likes.builder()
                         .member_id(member.getId())
-                        .sell_post_id(sellPost.getSellPostId())
+                        .sell_post_id(sellPost.getSell_post_id())
                         .build();
                 likesRepository.insertLikes(likes);
                 return likes;

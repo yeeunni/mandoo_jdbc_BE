@@ -45,14 +45,6 @@ public class MemberController {
         }
     }
 
-    @PatchMapping("/changepassword/{memberId}")
-    public ApiResponse<MemberDTO.MemberSignUpResponseDto> changePassword(@RequestBody MemberDTO.MemberChangePasswordDto findPasswordRequestDto, @PathVariable Long memberId) {
-        try {
-            return ApiResponse.onSuccess(memberService.changePassword(memberId, findPasswordRequestDto.getNewPassword()));
-        } catch (GlobalException e) {
-            return ApiResponse.onFailure(e.getErrorCode(), memberService.changePassword(memberId, findPasswordRequestDto.getNewPassword()));
-        }
-    }
     @DeleteMapping("/delete/{memberId}")
     public ApiResponse deleteMember(@PathVariable("memberId") Long memberId){
         try {

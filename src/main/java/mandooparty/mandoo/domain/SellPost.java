@@ -28,21 +28,4 @@ public class SellPost {
     private LocalDateTime created_at;  // 생성 일자
     private LocalDateTime updated_at; // 수정 일자
 
-    // 카테고리 ID 목록 (연결 테이블을 직접 처리하기 위해 간단한 리스트로 대체)
-    private List<Long> category_ids;
-
-    // 이미지 경로 목록 (이미지 파일 경로를 직접 저장)
-    private List<String> image_paths;
-
-    // 업데이트 메서드
-    public void update(String title, Integer price, String description, String city, String gu, String dong, List<Long> categoryIds) {
-        this.title = title;
-        this.price = price;
-        this.description = description;
-        this.city = city;
-        this.gu = gu;
-        this.dong = dong;
-        this.category_ids = categoryIds; // 카테고리 ID 목록 업데이트
-        this.updated_at = LocalDateTime.now(); // 수정 시간 갱신
-    }
 }

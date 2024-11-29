@@ -27,7 +27,7 @@ public class MemberDTO {
         private String email;
         private String password;
         private String nickname;
-        private String status;
+        private Integer status;
     }
     @Builder
     @Getter
