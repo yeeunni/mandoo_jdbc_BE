@@ -7,6 +7,7 @@ import mandooparty.mandoo.domain.*;
 import mandooparty.mandoo.exception.GlobalErrorCode;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.*;
+import mandooparty.mandoo.web.dto.CommentDTO;
 import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,9 @@ public class SellPostServiceImpl implements SellPostService {
     private CategoryRepository categoryRepository;
     @Autowired
     private SellImagePathRepository sellImagePathRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     private final MemberRepository memberRepository;
     private final SellPostConverter sellPostConverter;
@@ -105,6 +109,7 @@ public class SellPostServiceImpl implements SellPostService {
         // SellPost 조회
         SellPost sellPost = sellPostRepository.findById(id)
                 .orElseThrow(() -> new GlobalException(GlobalErrorCode.POST_NOT_FOUND));
+
         // DTO 변환
         return SellPostConverter.sellPostResponseDto(sellPost);
     }

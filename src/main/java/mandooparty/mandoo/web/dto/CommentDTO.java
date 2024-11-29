@@ -34,6 +34,7 @@ public class CommentDTO {
         private Long parentCommentId;   // 부모 댓글 ID (답글일 경우)
         private LocalDateTime createdAt;  // 작성일
         private LocalDateTime modifiedAt; // 수정일
+        private String nickname;
     }
 
     @Builder

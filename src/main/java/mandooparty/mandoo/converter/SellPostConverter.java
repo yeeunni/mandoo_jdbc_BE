@@ -4,8 +4,10 @@ import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.SellPost;
 import mandooparty.mandoo.domain.Category;
 import mandooparty.mandoo.domain.SellPostCategory;
+import mandooparty.mandoo.web.dto.CommentDTO;
 import mandooparty.mandoo.domain.SellImagePath;
 import mandooparty.mandoo.repository.CategoryRepository;
+import mandooparty.mandoo.repository.CommentRepository;
 import mandooparty.mandoo.repository.SellImagePathRepository;
 import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +43,13 @@ public class SellPostConverter {
 
     private static CategoryRepository categoryRepository;
     private static SellImagePathRepository sellImagePathRepository;
+    private static CommentRepository commentRepository;
 
     @Autowired
-    public SellPostConverter(CategoryRepository categoryRepository, SellImagePathRepository sellImagePathRepository) {
+    public SellPostConverter(CategoryRepository categoryRepository, SellImagePathRepository sellImagePathRepository, CommentRepository commentRepository) {
         this.categoryRepository = categoryRepository;
         this.sellImagePathRepository = sellImagePathRepository;
+        this.commentRepository =  commentRepository;
     }
 
     // SellPost -> SellPostResponseDto 변환
@@ -53,6 +57,8 @@ public class SellPostConverter {
 
         List<String> categories = categoryRepository.findCategoryNamesBySellPostId(sellPost.getSell_post_id());
         List<String> images = sellImagePathRepository.findImagePathsBySellPostId(sellPost.getSell_post_id());
+        // 댓글과 작성자 닉네임 조회
+        List<CommentDTO.CommentResponseDto> comments = commentRepository.findCommentsBySellPostId(sellPost.getSell_post_id());
 
         return SellPostDTO.SellPostResponseDto.builder()
                 .sellPostId(sellPost.getSell_post_id())   // 게시글 ID 설정
@@ -69,6 +75,7 @@ public class SellPostConverter {
                 .memberId(sellPost.getMember_id())
                 .categories(categories)                 // 카테고리 설정
                 .images(images)                         // 이미지 경로 설정
+                .comments(comments)
                 .build();
     }
 
