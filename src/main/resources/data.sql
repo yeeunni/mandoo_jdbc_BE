@@ -1,6 +1,10 @@
-INSERT INTO category(category_id,name)
-VALUES (1,"IT 기기");
-INSERT INTO category(category_id,name)
-VALUES (2,"도서");
-INSERT INTO category(category_id,name)
-VALUES (3,"자전거");
+INSERT INTO category (name) VALUES
+('수입 명품'),
+('패션의류'),
+('뷰티'),
+('출산/유아동'),
+('가전제품'),
+('카메라/캠코더'),
+('모바일/탬플릿'),
+('도서/음반/분류'),
+('노트북/PC');

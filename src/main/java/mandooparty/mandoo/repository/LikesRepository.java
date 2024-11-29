@@ -22,12 +22,15 @@ import java.util.Optional;
 public class LikesRepository{
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    public List<SellPost> findByMemberId(Long memberId)
-    {
-        String sql="SELECT l.sellPost FROM Likes as l WHERE l.member_id = ?";try {
-        // parentComment의 ID를 추출하여 쿼리 실행
-        return jdbcTemplate.query(sql, new Object[]{memberId},
-                new BeanPropertyRowMapper<>(SellPost.class));
+    public List<SellPost> findByMemberId(Long memberId) {
+        String sql = "SELECT sp.* FROM sellpost AS sp " +
+                "JOIN likes AS l ON sp.id = l.sellpost_id " +
+                "WHERE l.member_id = ?";
+
+        try {
+            // memberId에 해당하는 SellPost 목록을 쿼리 실행
+            return jdbcTemplate.query(sql, new Object[]{memberId},
+                    new BeanPropertyRowMapper<>(SellPost.class));
         } catch (EmptyResultDataAccessException e) {
             return null; // 결과가 없으면 null 반환
         }
@@ -46,7 +49,7 @@ public class LikesRepository{
     }
 
     public Optional<Likes> findBySellPostAndMember(SellPost sellPost, Member member) {
-        String sql = "SELECT l.* FROM Likes as l WHERE l.sellpost_id=? AND l.member_id=?";
+        String sql = "SELECT l.* FROM Likes as l WHERE l.sell_post_id=? AND l.member_id=?";
         try {
             // queryForObject를 사용하여 하나의 결과를 반환
             Likes like = jdbcTemplate.queryForObject(
@@ -61,7 +64,7 @@ public class LikesRepository{
     }
 
     public boolean deleteBySellPost(SellPost sellPost) {
-        String sql = "DELETE FROM Likes WHERE sellpost_id = ?";
+        String sql = "DELETE FROM Likes WHERE sell_post_id = ?";
         int rowsAffected = jdbcTemplate.update(sql, sellPost.getSell_post_id());
         return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
     }

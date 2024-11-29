@@ -50,6 +50,8 @@ public class ReportServiceImpl implements ReportService{
                         .sell_post_id(sellPost.getSell_post_id())
                         .member_id(member.getId())
                         .post_report_count(1)
+                        .created_at(LocalDateTime.now())
+                        .updated_at(LocalDateTime.now())
                         .build();
                 postReportRepository.insertPostReport(postReport);
                 return postReport;
@@ -81,6 +83,8 @@ public class ReportServiceImpl implements ReportService{
                         .comment_id(comment.getId())
                         .member_id(member.getId())
                         .comment_report_count(1)
+                        .created_at(LocalDateTime.now())
+                        .updated_at(LocalDateTime.now())
                         .build();
                 commentReportRepository.insertCommentReport(commentReport);
             }

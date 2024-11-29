@@ -44,7 +44,7 @@ public class SellPostController {
 
     // 게시글 조회 요청 처리
     @GetMapping("/read/{sellPostId}")
-    public ApiResponse<SellPostDTO.SellPostResponseDto> getSellPost(@PathVariable Long sellPostId) {
+    public ApiResponse<SellPostDTO.SellPostResponseDto> getSellPost(@PathVariable("sellPostId") Long sellPostId) {
         try {
             return ApiResponse.onSuccess(sellPostService.getSellPostById(sellPostId));
         } catch (GlobalException e) {

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -63,7 +64,7 @@ public class SellPostServiceImpl implements SellPostService {
                 throw new GlobalException(GlobalErrorCode.CATEGORY_NOT_FOUND);
             }
 
-            String insertCategorySql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+            String insertCategorySql = "INSERT INTO sellpostcategory (sell_post_id, category_id) VALUES (?, ?)";
             jdbcTemplate.update(insertCategorySql, sellPost.getSell_post_id(), categoryId);
         }
 
@@ -81,7 +82,7 @@ public class SellPostServiceImpl implements SellPostService {
                     }
                     file.transferTo(new File(filePath));
 
-                    String insertImageSql = "INSERT INTO sellimagepath (path, sellpost_id) VALUES (?, ?)";
+                    String insertImageSql = "INSERT INTO sellimagepath (path, sell_post_id) VALUES (?, ?)";
                     jdbcTemplate.update(insertImageSql, filePath, sellPost.getSell_post_id());
 
                 } catch (IOException e) {
@@ -116,7 +117,7 @@ public class SellPostServiceImpl implements SellPostService {
 
         // 카테고리 처리
         List<Long> categoryIds = Optional.ofNullable(request.getCategoryIds()).orElse(Collections.emptyList());
-        String deleteCategorySql = "DELETE FROM sellpostCategory WHERE sellpost_id = ?";
+        String deleteCategorySql = "DELETE FROM sellpostcategory WHERE sell_post_id = ?";
         jdbcTemplate.update(deleteCategorySql, sellPostId);
 
         for (Long categoryId : categoryIds) {
@@ -127,13 +128,13 @@ public class SellPostServiceImpl implements SellPostService {
                 throw new GlobalException(GlobalErrorCode.CATEGORY_NOT_FOUND);
             }
 
-            String insertCategorySql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+            String insertCategorySql = "INSERT INTO sellpostcategory (sell_post_id, category_id) VALUES (?, ?)";
             jdbcTemplate.update(insertCategorySql, sellPostId, categoryId);
         }
 
         // 이미지 처리
         List<MultipartFile> images = Optional.ofNullable(request.getImages()).orElse(Collections.emptyList());
-        String deleteImageSql = "DELETE FROM sellimagepath WHERE sellpost_id = ?";
+        String deleteImageSql = "DELETE FROM sellimagepath WHERE sell_post_id = ?";
         jdbcTemplate.update(deleteImageSql, sellPostId);
 
         if (!images.isEmpty()) {
@@ -148,7 +149,7 @@ public class SellPostServiceImpl implements SellPostService {
                     }
                     file.transferTo(new File(filePath));
 
-                    String insertImageSql = "INSERT INTO sellimagepath (path, sellpost_id) VALUES (?, ?)";
+                    String insertImageSql = "INSERT INTO sellimagepath (path, sell_post_id) VALUES (?, ?)";
                     jdbcTemplate.update(insertImageSql, filePath, sellPostId);
 
                 } catch (IOException e) {
@@ -211,7 +212,7 @@ public class SellPostServiceImpl implements SellPostService {
         sellPost.setGu(rs.getString("gu"));
         sellPost.setDong(rs.getString("dong"));
         sellPost.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());
-        sellPost.setUpdated_at(rs.getTimestamp("modified_at").toLocalDateTime());
+        sellPost.setUpdated_at(rs.getTimestamp("updated_at").toLocalDateTime());
         return sellPost;
     };
 

@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.PageImpl;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -43,28 +45,35 @@ public class SellPostRepository {
     }
 
     public boolean insertSellPost(SellPost sellPost) {
-        // SellPost 필드 추출
-        String title = sellPost.getTitle();
-        Integer price = sellPost.getPrice();
-        String description = sellPost.getDescription();
-        String city = sellPost.getCity();
-        String gu = sellPost.getGu();
-        String dong = sellPost.getDong();
-        Long memberId = sellPost.getMember_id();
-        LocalDateTime createdAt = sellPost.getCreated_at();
-        LocalDateTime modifiedAt = sellPost.getUpdated_at();
-
-        // SQL 수정
         String sql = "INSERT INTO sellpost (title, price, description, city, gu, dong, member_id, created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // 매개변수 전달 수정
-        int rowsAffected = jdbcTemplate.update(sql, title, price, description, city, gu, dong, memberId, createdAt, modifiedAt);
-        return rowsAffected > 0;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        int rowsAffected = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, sellPost.getTitle());
+            ps.setInt(2, sellPost.getPrice());
+            ps.setString(3, sellPost.getDescription());
+            ps.setString(4, sellPost.getCity());
+            ps.setString(5, sellPost.getGu());
+            ps.setString(6, sellPost.getDong());
+            ps.setLong(7, sellPost.getMember_id());
+            ps.setTimestamp(8, Timestamp.valueOf(sellPost.getCreated_at()));
+            ps.setTimestamp(9, Timestamp.valueOf(sellPost.getUpdated_at()));
+            return ps;
+        }, keyHolder);
+
+        if (rowsAffected > 0) {
+            sellPost.setSell_post_id(keyHolder.getKey().longValue());
+            return true;
+        }
+        return false;
     }
 
+
     public boolean insertSellPostCategory(Long sellPostId, Long categoryId) {
-        String sql = "INSERT INTO sellpostCategory (sellpost_id, category_id) VALUES (?, ?)";
+        String sql = "INSERT INTO sellpostCategory (sell_post_id, category_id) VALUES (?, ?)";
         int rowsAffected = jdbcTemplate.update(sql, sellPostId, categoryId);
         return rowsAffected > 0;
     }

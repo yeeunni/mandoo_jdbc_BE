@@ -24,14 +24,14 @@ public class CommentReportRepository{
         Long commentId=commentReport.getComment_id();
         LocalDateTime createdAt=commentReport.getCreated_at();
         LocalDateTime updatedAt=commentReport.getUpdated_at();
-        String sql = "INSERT INTO post_report (comment_report_count, member_id,comment_id,created_at,updated_at) " +
+        String sql = "INSERT INTO postreport (comment_report_count, member_id,comment_id,created_at,updated_at) " +
                 "VALUES (?, ?, ?, ?,?)";
         int rowsAffected = jdbcTemplate.update(sql, postReportCount, memberId, commentId, createdAt,updatedAt);
         return rowsAffected > 0;
     }
 
     public List<CommentReport> findAll(String order) {
-        String sql = "SELECT c.* FROM comment_report AS c";
+        String sql = "SELECT c.* FROM commentreport AS c";
         if (order != null && (order.equalsIgnoreCase("name ASC") || order.equalsIgnoreCase("name DESC")
                 || order.equalsIgnoreCase("login_time ASC") || order.equalsIgnoreCase("login_time DESC"))) {
             sql += " ORDER BY " + order;}
@@ -40,7 +40,7 @@ public class CommentReportRepository{
     }
 
     public Optional<CommentReport> findByCommentAndMember(Comment comment,Member member){
-        String sql="SELECT c.* FROM comment_report AS c WHERE c.comment_id=? AND c.member_id=?";
+        String sql="SELECT c.* FROM commentreport AS c WHERE c.comment_id=? AND c.member_id=?";
         try {
             // queryForObject를 사용하여 하나의 결과를 반환
             CommentReport commentReport = jdbcTemplate.queryForObject(
@@ -57,7 +57,7 @@ public class CommentReportRepository{
 
     public  CommentReport findByComment(Comment comment)
     {
-        String sql="SELECT c.* FROM comment_report AS c WHERE c.comment_id=?";
+        String sql="SELECT c.* FROM commentreport AS c WHERE c.comment_id=?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{comment.getId()},CommentReport.class);
         } catch (EmptyResultDataAccessException e) {

@@ -11,6 +11,8 @@ import mandooparty.mandoo.repository.MemberRepository;
 import mandooparty.mandoo.repository.SellPostRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -36,6 +38,8 @@ public class LikesServiceImpl implements LikesService{
                 Likes likes=Likes.builder()
                         .member_id(member.getId())
                         .sell_post_id(sellPost.getSell_post_id())
+                        .created_at(LocalDateTime.now())
+                        .updated_at(LocalDateTime.now())
                         .build();
                 likesRepository.insertLikes(likes);
                 return likes;

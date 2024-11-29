@@ -20,7 +20,7 @@ CREATE TABLE `SellPost` (
    `description` VARCHAR(100) NULL,
    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   `status` INT NOT NULL,
+   `status` INT NOT NULL DEFAULT 0,
    `city` VARCHAR(45) NOT NULL,
    `gu` VARCHAR(45) NULL,
    `dong` VARCHAR(45) NULL,
@@ -56,17 +56,18 @@ CREATE TABLE `Likes` (
    FOREIGN KEY (`sell_post_id`) REFERENCES `SellPost`(`sell_post_id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `post_report` (
+CREATE TABLE `Postreport` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
    `sell_post_id` BIGINT NOT NULL,
    `member_id` BIGINT NOT NULL,
    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   `post_report_count` INT NOT NULL DEFAULT 0
+   `post_report_count` INT NOT NULL DEFAULT 0,  -- 쉼표 추가
    PRIMARY KEY (`id`),
    FOREIGN KEY (`sell_post_id`) REFERENCES `SellPost`(`sell_post_id`) ON DELETE CASCADE,
    FOREIGN KEY (`member_id`) REFERENCES `Member`(`id`) ON DELETE CASCADE
 );
+
 
 CREATE TABLE `Category` (
    `category_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -74,18 +75,18 @@ CREATE TABLE `Category` (
    PRIMARY KEY (`category_id`)
 );
 
-CREATE TABLE `comment_report` (
+CREATE TABLE `Commentreport` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
-   `comment_report_count` INT NOT NULL,
+   `comment_report_count` INT NOT NULL DEFAULT 0,  -- 두 번째 정의를 남기고 첫 번째 정의를 제거
    `member_id` BIGINT NOT NULL,
    `comment_id` BIGINT NOT NULL,
    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   `post_report_count` INT NOT NULL DEFAULT 0,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`member_id`) REFERENCES `Member`(`id`) ON DELETE CASCADE,
    FOREIGN KEY (`comment_id`) REFERENCES `Comment`(`id`) ON DELETE CASCADE
 );
+
 
 CREATE TABLE `SellPostCategory` (
    `sell_post_category_id` BIGINT NOT NULL AUTO_INCREMENT,

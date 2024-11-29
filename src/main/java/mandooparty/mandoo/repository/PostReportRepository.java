@@ -28,7 +28,7 @@ public class PostReportRepository {  // 수정: class 키워드 추가
         Long sellPostId=postReport.getSell_post_id();
         LocalDateTime createdAt=postReport.getCreated_at();
         LocalDateTime updatedAt=postReport.getUpdated_at();
-        String sql = "INSERT INTO post_report (post_report_count, member_id,sell_post_id,created_at,updated_at) " +
+        String sql = "INSERT INTO postreport (post_report_count, member_id,sell_post_id,created_at,updated_at) " +
                 "VALUES (?, ?, ?, ?,?)";
         int rowsAffected = jdbcTemplate.update(sql, postReportCount, memberId, sellPostId, createdAt,updatedAt);
         return rowsAffected > 0;
@@ -36,7 +36,7 @@ public class PostReportRepository {  // 수정: class 키워드 추가
 
 
     public Optional<PostReport> findBySellPostAndMember(SellPost sellPost, Member member) {
-        String sql = "SELECT p.* FROM post_report as p WHERE p.sell_post_id=? and p.member_id=?";
+        String sql = "SELECT p.* FROM postreport as p WHERE p.sell_post_id=? and p.member_id=?";
         try {
             PostReport postReport = jdbcTemplate.queryForObject(
                     sql,
@@ -51,7 +51,7 @@ public class PostReportRepository {  // 수정: class 키워드 추가
 
     public PostReport findBySellPost(SellPost sellPost)
     {
-        String sql="SELECT p.* FROM post_report p WHERE p.sell_post_id=?";
+        String sql="SELECT p.* FROM postreport p WHERE p.sell_post_id=?";
         try {
             return jdbcTemplate.queryForObject(
                     sql,
@@ -65,7 +65,7 @@ public class PostReportRepository {  // 수정: class 키워드 추가
 
     public List<PostReport> findAll(Sort sort)
     {
-        String sql = "SELECT * FROM post_report";
+        String sql = "SELECT * FROM postreport";
 
         // Add sorting logic
         if (sort != null && sort.isSorted()) {
