@@ -20,7 +20,7 @@ public class MemberRepository{
 
     public Optional<Member> findById(Long memberId)
     {
-        String sql="SELECT m.* FROM member AS m WHERE m.member_id=?";
+        String sql="SELECT m.* FROM member AS m WHERE m.id=?";
         try {
             Member member= jdbcTemplate.queryForObject(
                     sql,
@@ -75,7 +75,7 @@ public class MemberRepository{
     }
 
 
-    Long getCountByDate(LocalDate day)
+    public Long getCountByDate(LocalDate day)
     {
         String sql="SELECT COUNT(*) FROM member WHERE DATE(created_at)=?";
         try {
@@ -87,19 +87,26 @@ public class MemberRepository{
     }
 
 
-    List<Member> findByLoginTime(LocalDate day)
-    {
-        String sql="SELECT * FROM Member WHERE DATE(login_time) < ? ";
-        try {
-            java.sql.Date sqlDate = java.sql.Date.valueOf(day);
-            // parentComment의 ID를 추출하여 쿼리 실행
-            return jdbcTemplate.query(sql, new Object[]{sqlDate},
-                    new BeanPropertyRowMapper<>(Member.class));
-        } catch (EmptyResultDataAccessException e) {
-            return null; // 결과가 없으면 null 반환
+    public List<Member> findByLoginTime(LocalDate day, String order) {
+        // 기본 SQL 쿼리
+        String sql = "SELECT * FROM Member WHERE DATE(login_time) < ?";
+
+        // order가 비어있지 않으면 ORDER BY 추가
+        if (order != null && !order.trim().isEmpty()) {
+            sql += " ORDER BY " + order; // SQL Injection 위험 방지를 위해 직접 매개변수로 사용하지 않음
         }
 
+        try {
+            java.sql.Date sqlDate = java.sql.Date.valueOf(day);
+            return jdbcTemplate.query(sql,
+                    new Object[]{sqlDate},
+                    new BeanPropertyRowMapper<>(Member.class));
+        } catch (EmptyResultDataAccessException e) {
+            return List.of(); // 결과가 없으면 빈 리스트 반환
+        }
     }
+
+
 
     public boolean deleteById(Long memberId) {
         String sql = "DELETE FROM member WHERE id = ?"; // 테이블 및 열 이름을 스키마에 맞게 수정

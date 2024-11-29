@@ -2,23 +2,22 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mandoo_dev
     username: root
-    password: 12345678
+    password: hurmong7942@
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      mode: never
+      mode: always  # 항상 초기화하도록 설정
   jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        show_sql: true
         format_sql: true
-        use_sql_comments: true
-        hbm2ddl:
-          auto: update
-        default_batch_fetch_size: 1000
 
+    defer-datasource-initialization: true
+    generate-ddl: true
 
 upload:
   path: /Users/kang-minyoung/uploads/images
-

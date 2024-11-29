@@ -25,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDTO.CommentResponseDto createComment(CommentDTO.CommentResponseDto request) {
+    public CommentDTO.CommentResponseDto createComment(CommentDTO.CommentCreateDto request) {
         // 1. Member 검증 및 조회
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
@@ -42,24 +42,14 @@ public class CommentServiceImpl implements CommentService {
         }
 
         // 4. Comment 엔티티 생성
-        Comment comment = commentConverter.commentCreateDto(
-                CommentDTO.CommentCreateDto.builder()
-                        .content(request.getContent())
-                        .commentStatus(request.getCommentStatus())
-                        .memberId(request.getMemberId())
-                        .sellPostId(request.getSellPostId())
-                        .parentCommentId(request.getParentCommentId())
-                        .build(),
-                member,
-                sellPost,
-                parentComment
-        );
+        Comment comment = commentConverter.commentCreateDto(request);
+
 
         // 5. Comment 저장
-        Comment savedComment = commentRepository.save(comment);
+     commentRepository.insertComment(comment);
 
         // 6. 저장된 Comment를 DTO로 변환하여 반환
-        return commentConverter.commentResponseDto(savedComment);
+        return commentConverter.commentResponseDto(comment,member);
     }
 
 

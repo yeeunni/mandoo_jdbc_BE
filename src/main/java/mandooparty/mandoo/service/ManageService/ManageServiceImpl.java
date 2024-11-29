@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,20 +30,20 @@ public class ManageServiceImpl implements ManageService {
     private final PostReportRepository postReportRepository;
     private final LikesRepository likesRepository;
     public List<ManageDTO.ManageDashBoardSellPostDto> getDaySellPostCount(){
-        List<Tuple> result = sellPostRepository.countByCreatedAt();
+        List<Map<String,Object>> result = sellPostRepository.countByCreatedAt();
 
         // Tuple에서 데이터를 꺼내서 ManageDashBoardSellPostDto로 변환
         List<ManageDTO.ManageDashBoardSellPostDto> dtoList = new ArrayList<>();
 
-        for (Tuple tuple : result) {
+        for (Map<String,Object> row : result) {
             // Tuple에서 값을 추출
-            LocalDate date = tuple.get(0, java.sql.Date.class).toLocalDate();  // 첫 번째 값은 날짜
-            Long sellPostCount = tuple.get(1, Long.class);   // 두 번째 값은 sellpost 개수
+            LocalDate date = (LocalDate) row.get("created_at") ;// 첫 번째 값은 날짜
+            Integer sellPostCount = ((Number)row.get("count")).intValue();   // 두 번째 값은 sellpost 개수
 
             // DTO 객체 생성하여 리스트에 추가
             ManageDTO.ManageDashBoardSellPostDto dto = new ManageDTO.ManageDashBoardSellPostDto();
             dto.setDate(date);  // 날짜 설정
-            dto.setSellPostCount(sellPostCount.intValue());  // 개수 설정 (Long -> Integer로 변환)
+            dto.setSellPostCount(sellPostCount);  // 개수 설정 (Long -> Integer로 변환)
 
             dtoList.add(dto);  // 리스트에 추가
         }
@@ -56,23 +54,22 @@ public class ManageServiceImpl implements ManageService {
 
     public List<ManageDTO.ManageDashBoardCategoryRatioDto> getCategoryRatio()
     {
-        List<Tuple> result=sellPostCategoryRepository.countCategory();
+        List<Map<String,Object>> result=sellPostCategoryRepository.countCategory();
 
 
         // Tuple에서 데이터를 꺼내서 ManageDashBoardSellPostDto로 변환
         List<ManageDTO.ManageDashBoardCategoryRatioDto> dtoList = new ArrayList<>();
 
-        for (Tuple tuple : result) {
+        for (Map<String,Object> row : result) {
             // Tuple에서 값을 추출
-            String name = tuple.get(0, String.class);  // 첫 번째 값은 날짜
-            Long categoryCount = tuple.get(1, Long.class);   // 두 번째 값은 sellpost 개수
-            Double ratio = tuple.get(2, Double.class);
+            String name = (String)row.get("name");  // 첫 번째 값은 날짜
+            Long categoryCount = (Long)row.get("category_count");   // 두 번째 값은 sellpost 개수
+            Double ratio = (Double)row.get("ratio");
 
             // DTO 객체 생성하여 리스트에 추가
             ManageDTO.ManageDashBoardCategoryRatioDto dto = new ManageDTO.ManageDashBoardCategoryRatioDto();
             dto.setName(name);  // 날짜 설정
             dto.setCategoryCount(categoryCount.intValue());  // 개수 설정 (Long -> Integer로 변환)
-
             dto.setRatio((int) Math.round(ratio));
 
 
@@ -110,8 +107,7 @@ public class ManageServiceImpl implements ManageService {
     public List<Member> getMember(String order){
         LocalDate today=LocalDate.now();
         LocalDate sixMonthsAgo=today.minusMonths(6);
-        Sort sort=Sort.by(Sort.Direction.ASC,order);
-        return memberRepository.findByLoginTime(sixMonthsAgo,sort);
+        return memberRepository.findByLoginTime(sixMonthsAgo,order);
     };
 
     public List<ManageDTO.CommentReportDto> getCommentReport(String order)
@@ -121,12 +117,13 @@ public class ManageServiceImpl implements ManageService {
             order = "createdAt";
         }
 
-        Sort sort = Sort.by(Sort.Direction.ASC, order);
-        List<CommentReport> commentReportList=commentReportRepository.findAll(sort);
+//        Sort sort = Sort.by(Sort.Direction.ASC, order);
+        List<CommentReport> commentReportList=commentReportRepository.findAll(order);
 
         List<ManageDTO.CommentReportDto> commentReportDtoList=new ArrayList<>();
         for(CommentReport commentReport:commentReportList){
-            commentReportDtoList.add(ManageConverter.ManageCommentReportDto(commentReport));
+            Optional<Comment> comment=commentRepository.findById(commentReport.getComment_id());
+            commentReportDtoList.add(ManageConverter.ManageCommentReportDto(commentReport,comment.get()));
         }
         return commentReportDtoList;
 
@@ -143,7 +140,8 @@ public class ManageServiceImpl implements ManageService {
 
         List<ManageDTO.PostReportDto> postReportDtoList=new ArrayList<>();
         for(PostReport postReport:postReportList){
-            postReportDtoList.add(ManageConverter.ManagePostReportDto(postReport));
+            Optional<SellPost> sellPost=sellPostRepository.findById(postReport.getSell_post_id());
+            postReportDtoList.add(ManageConverter.ManagePostReportDto(postReport,sellPost.get()));
         }
         return postReportDtoList;
 
@@ -163,7 +161,7 @@ public class ManageServiceImpl implements ManageService {
         Optional<Comment> deleteComment=commentRepository.findById(commentId);
 
         if(deleteComment.isPresent()) {
-            commentRepository.delete(deleteComment.get());
+            commentRepository.deleteById(commentId);
         }else{
             throw new GlobalException(GlobalErrorCode.COMMENT_NOT_FOUND);
         }

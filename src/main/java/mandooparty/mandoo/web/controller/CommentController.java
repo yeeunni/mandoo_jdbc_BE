@@ -17,13 +17,7 @@ public class CommentController {
     public ResponseEntity<CommentDTO.CommentResponseDto> createComment(
             @RequestBody CommentDTO.CommentCreateDto request) {
         CommentDTO.CommentResponseDto response = commentService.createComment(
-                CommentDTO.CommentResponseDto.builder()
-                        .content(request.getContent())
-                        .commentStatus(request.getCommentStatus())
-                        .memberId(request.getMemberId())
-                        .sellPostId(request.getSellPostId())
-                        .parentCommentId(request.getParentCommentId())
-                        .build()
+                request
         );
         return ResponseEntity.ok(response);
     }

@@ -35,10 +35,10 @@ public class LikesRepository{
 
     public boolean insertLikes(Likes likes)
     {
-        Long memberId = likes.getMember().getId();
-        Long sellPostId=likes.getSellPost().getSellPostId();
-        LocalDateTime createdAt=likes.getCreatedAt();
-        LocalDateTime updatedAt=likes.getUpdateAt();
+        Long memberId = likes.getMember_id();
+        Long sellPostId=likes.getSell_post_id();
+        LocalDateTime createdAt=likes.getCreated_at();
+        LocalDateTime updatedAt=likes.getUpdated_at();
         String sql = "INSERT INTO likes (member_id, sell_post_id,created_at,updated_at) " +
                 "VALUES (?, ?, ?, ?)";
         int rowsAffected = jdbcTemplate.update(sql, memberId, sellPostId, createdAt, updatedAt);
@@ -51,7 +51,7 @@ public class LikesRepository{
             // queryForObject를 사용하여 하나의 결과를 반환
             Likes like = jdbcTemplate.queryForObject(
                     sql,
-                    new Object[]{sellPost.getSellPostId(), member.getId()},
+                    new Object[]{sellPost.getSell_post_id(), member.getId()},
                     new BeanPropertyRowMapper<>(Likes.class)
             );
             return Optional.ofNullable(like); // like가 null이면 Optional.empty() 반환
@@ -62,7 +62,7 @@ public class LikesRepository{
 
     public boolean deleteBySellPost(SellPost sellPost) {
         String sql = "DELETE FROM Likes WHERE sellpost_id = ?";
-        int rowsAffected = jdbcTemplate.update(sql, sellPost.getSellPostId());
+        int rowsAffected = jdbcTemplate.update(sql, sellPost.getSell_post_id());
         return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
     }
 

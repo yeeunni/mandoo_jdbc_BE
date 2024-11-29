@@ -56,11 +56,13 @@ public class MemberServiceImpl implements MemberService {
                 .password(password)
                 .status(memberStatus) // Enum 값을 문자열로 저장
                 .nickname(nickname)
-                .isLogin(false) // 기본값 설정
-                .writeSellPostCount(0) // 기본값 설정
-                .likeSellPostCount(0) // 기본값 설정
-                .completedSellPostCount(0) // 기본값 설정
-                .loginTime(null) // 기본값 설정
+                .is_login(false) // 기본값 설정
+                .write_sell_post_count(0) // 기본값 설정
+                .like_sell_post_count(0) // 기본값 설정
+                .completed_sell_post_count(0) // 기본값 설정
+                .login_time(null) // 기본값 설정
+                .created_at(LocalDateTime.now())
+                .updated_at(LocalDateTime.now())
                 .build();
         memberRepository.insertMember(member);
         return member;
@@ -77,8 +79,8 @@ public class MemberServiceImpl implements MemberService {
             Member member = findMemberByEmail.get(); //사용자 객체를 가져옴
 
             if (password.equals(member.getPassword())) { //만약 요청의 패스워드마저 같으면
-                member.setIsLogin(true);
-                member.setLoginTime(LocalDateTime.now());
+                member.setIs_login(true);
+                member.setLogin_time(LocalDateTime.now());
                 return memberLoginResponseDto(member); //사용자의 정보를 return해준다.
             } else {
                 throw new GlobalException(GlobalErrorCode.PASSWORD_MISMATCH); //비밀번호가 일치하지않는다면
@@ -97,8 +99,8 @@ public class MemberServiceImpl implements MemberService {
             Member member = findMemberByEmail.get();
 
             // 로그인 상태인지 확인
-            if (member.getIsLogin()) { //isLogin이 true면 -> 사용자가 로그인중이라는 뜻
-                member.setIsLogin(false);  // isLogin 상태를 false로 설정하여 로그아웃 처리
+            if (member.getIs_login()) { //isLogin이 true면 -> 사용자가 로그인중이라는 뜻
+                member.setIs_login(false);  // isLogin 상태를 false로 설정하여 로그아웃 처리
                 return memberLoginResponseDto(member); // 로그아웃 완료 후 정보 반환
             } else {
                 throw new GlobalException(GlobalErrorCode.ALREADY_LOGGED_OUT); // 이미 로그아웃 상태일 때 예외 발생
@@ -115,7 +117,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (findMember.isPresent()) { //사용자가 있고
             Member member = findMember.get();
-            if (member.getIsLogin()){ //로그인 상태이고
+            if (member.getIs_login()){ //로그인 상태이고
                 memberRepository.deleteById(memberId); // JPA 기본 메서드 사용
             }else{
                 throw new GlobalException(GlobalErrorCode.ALREADY_LOGGED_OUT); // 이미 로그아웃 상태일 때 예외 발생

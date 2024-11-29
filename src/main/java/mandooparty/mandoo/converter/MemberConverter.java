@@ -36,7 +36,7 @@ public class MemberConverter {
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .status(String.valueOf(member.getStatus()))
-                .isLogin(member.getIsLogin())
+                .isLogin(member.getIs_login())
                 .build();
     }
 }

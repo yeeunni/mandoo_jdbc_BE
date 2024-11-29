@@ -23,12 +23,12 @@ public class PostReportRepository {  // 수정: class 키워드 추가
 
     public boolean insertPostReport(PostReport postReport)
     {
-        Integer postReportCount = postReport.getPostReportCount();
-        Long memberId=postReport.getMember().getId();
-        Long sellPostId=postReport.getSellPost().getSellPostId();
-        LocalDateTime createdAt=postReport.getCreatedAt();
-        LocalDateTime updatedAt=postReport.getUpdateAt();
-        String sql = "INSERT INTO post_report (post_report_count, member_id,sellpost_id,created_at,updated_at) " +
+        Integer postReportCount = postReport.getPost_report_count();
+        Long memberId=postReport.getMember_id();
+        Long sellPostId=postReport.getSell_post_id();
+        LocalDateTime createdAt=postReport.getCreated_at();
+        LocalDateTime updatedAt=postReport.getUpdated_at();
+        String sql = "INSERT INTO post_report (post_report_count, member_id,sell_post_id,created_at,updated_at) " +
                 "VALUES (?, ?, ?, ?,?)";
         int rowsAffected = jdbcTemplate.update(sql, postReportCount, memberId, sellPostId, createdAt,updatedAt);
         return rowsAffected > 0;
@@ -36,11 +36,11 @@ public class PostReportRepository {  // 수정: class 키워드 추가
 
 
     public Optional<PostReport> findBySellPostAndMember(SellPost sellPost, Member member) {
-        String sql = "SELECT p.* FROM PostReport as p WHERE p.sellpost_id=? and p.member_id=?";
+        String sql = "SELECT p.* FROM post_report as p WHERE p.sell_post_id=? and p.member_id=?";
         try {
             PostReport postReport = jdbcTemplate.queryForObject(
                     sql,
-                    new Object[]{sellPost.getSellPostId(), member.getId()},
+                    new Object[]{sellPost.getSell_post_id(), member.getId()},
                     new BeanPropertyRowMapper<>(PostReport.class)  // 수정된 부분
             );
             return Optional.ofNullable(postReport);  // Optional로 감싸서 반환
@@ -51,11 +51,11 @@ public class PostReportRepository {  // 수정: class 키워드 추가
 
     public PostReport findBySellPost(SellPost sellPost)
     {
-        String sql="SELECT p.* FROM post_report p WHERE p.sellpost_id=?";
+        String sql="SELECT p.* FROM post_report p WHERE p.sell_post_id=?";
         try {
             return jdbcTemplate.queryForObject(
                     sql,
-                    new Object[]{sellPost.getSellPostId()},
+                    new Object[]{sellPost.getSell_post_id()},
                     new BeanPropertyRowMapper<>(PostReport.class)  // 수정된 부분
             );
         } catch (EmptyResultDataAccessException e) {

@@ -55,7 +55,7 @@ public class SellPostRepository {
         LocalDateTime modifiedAt = sellPost.getUpdated_at();
 
         // SQL 수정
-        String sql = "INSERT INTO sell_post (title, price, description, city, gu, dong, member_id, created_at, modified_at) " +
+        String sql = "INSERT INTO sellpost (title, price, description, city, gu, dong, member_id, created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // 매개변수 전달 수정

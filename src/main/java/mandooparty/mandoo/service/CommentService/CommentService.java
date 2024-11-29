@@ -4,5 +4,5 @@ import mandooparty.mandoo.web.dto.CommentDTO;
 
 public interface CommentService {
 
-    CommentDTO.CommentResponseDto createComment(CommentDTO.CommentResponseDto request);
+    CommentDTO.CommentResponseDto createComment(CommentDTO.CommentCreateDto request);
 }

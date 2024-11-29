@@ -1,5 +1,6 @@
 package mandooparty.mandoo.converter;
 
+import mandooparty.mandoo.domain.Comment;
 import mandooparty.mandoo.domain.CommentReport;
 import mandooparty.mandoo.domain.PostReport;
 import mandooparty.mandoo.web.dto.ReportDTO;
@@ -11,18 +12,18 @@ public class ReportConverter {
     public static ReportDTO.SellPostReportResponseDto sellPostReportResponseDto(PostReport postReport){
         return ReportDTO.SellPostReportResponseDto.builder()
                 .sellPostReportId(postReport.getId())
-                .sellPostId(postReport.getSellPost().getSellPostId())
-                .memberId(postReport.getMember().getId())
-                .postReportCount(postReport.getPostReportCount())
+                .sellPostId(postReport.getSell_post_id())
+                .memberId(postReport.getMember_id())
+                .postReportCount(postReport.getPost_report_count())
                 .build();
     }
 
-    public static ReportDTO.CommentReportResponseDto commentReportResponseDto(CommentReport commentReport){
+    public static ReportDTO.CommentReportResponseDto commentReportResponseDto(CommentReport commentReport, Comment comment){
         return ReportDTO.CommentReportResponseDto.builder()
                 .commentReportId(commentReport.getId())
-                .commentId(commentReport.getComment().getId())
-                .memberId(commentReport.getMember().getId())
-                .commentReportCount(commentReport.getCommentReportCount())
+                .commentId(comment.getId())
+                .memberId(commentReport.getMember_id())
+                .commentReportCount(commentReport.getComment_report_count())
                 .build();
     }
 }

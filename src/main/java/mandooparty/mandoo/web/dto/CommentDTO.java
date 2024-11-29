@@ -14,7 +14,7 @@ public class CommentDTO {
     @AllArgsConstructor
     public static class CommentCreateDto {
         private String content;          // 댓글 내용
-        private CommentStatus commentStatus; // 댓글 공개 여부
+        private Integer commentStatus; // 댓글 공개 여부
         private Long memberId;          // 작성자 ID
         private Long sellPostId;        // 게시글 ID
         private Long parentCommentId;   // 부모 댓글 ID (답글의 경우)
@@ -28,7 +28,7 @@ public class CommentDTO {
     public static class CommentResponseDto {
         private Long commentId;         // 댓글 ID
         private String content;         // 댓글 내용
-        private CommentStatus commentStatus; // 댓글 공개 여부
+        private Integer commentStatus; // 댓글 공개 여부
         private Long memberId;          // 작성자 ID
         private String memberNickname;  // 작성자 닉네임
         private Long sellPostId;        // 게시글 ID

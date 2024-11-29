@@ -64,7 +64,7 @@ public class ManageDTO {
         private Long memberId;
         private String passWord;
         private String email;
-        private MemberStatus status;
+        private Integer status;
         private String name;
         private String nickName;
         private Integer writeSellPostCount;

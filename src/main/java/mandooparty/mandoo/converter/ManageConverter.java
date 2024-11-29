@@ -1,8 +1,6 @@
 package mandooparty.mandoo.converter;
 
-import mandooparty.mandoo.domain.CommentReport;
-import mandooparty.mandoo.domain.Member;
-import mandooparty.mandoo.domain.PostReport;
+import mandooparty.mandoo.domain.*;
 import mandooparty.mandoo.web.dto.ManageDTO;
 import org.springframework.stereotype.Component;
 
@@ -16,41 +14,41 @@ public class ManageConverter {
                 .email(member.getEmail())
                 .status(member.getStatus())
                 .nickName(member.getNickname())
-                .writeSellPostCount(member.getWriteSellPostCount())
-                .likeSellPostCount(member.getLikeSellPostCount())
-                .completedSellPostCount(member.getCompletedSellPostCount())
-                .createdAt(member.getCreatedAt())
-                .modifiedAt(member.getUpdateAt())
+                .writeSellPostCount(member.getWrite_sell_post_count())
+                .likeSellPostCount(member.getLike_sell_post_count())
+                .completedSellPostCount(member.getCompleted_sell_post_count())
+                .createdAt(member.getCreated_at())
+                .modifiedAt(member.getUpdated_at())
                 .build();
     }
 
-    public static ManageDTO.CommentReportDto ManageCommentReportDto(CommentReport commentReport){
+    public static ManageDTO.CommentReportDto ManageCommentReportDto(CommentReport commentReport, Comment comment){
         return ManageDTO.CommentReportDto.builder()
                 .commentReportId(commentReport.getId())
-                .commentId(commentReport.getComment().getId())
-                .memberId(commentReport.getMember().getId())
-                .content(commentReport.getComment().getContent())
-                .writerId(commentReport.getComment().getMember().getId())
-                .sellPostId(commentReport.getComment().getSellPost().getSellPostId())
-                .commentReportCount(commentReport.getCommentReportCount())
-                .createdAt(commentReport.getCreatedAt())
-                .modifiedAt(commentReport.getUpdateAt())
+                .commentId(commentReport.getComment_id())
+                .memberId(commentReport.getMember_id())
+                .content(comment.getContent())
+                .writerId(comment.getMember_id())
+                .sellPostId(comment.getSell_post_id())
+                .commentReportCount(commentReport.getComment_report_count())
+                .createdAt(commentReport.getCreated_at())
+                .modifiedAt(commentReport.getUpdated_at())
                 .build();
     }
 
-    public static ManageDTO.PostReportDto ManagePostReportDto(PostReport postReport){
+    public static ManageDTO.PostReportDto ManagePostReportDto(PostReport postReport, SellPost sellPost){
         return ManageDTO.PostReportDto.builder()
                 .postReportId(postReport.getId())
-                .sellPostId(postReport.getSellPost().getSellPostId())
-                .title(postReport.getSellPost().getTitle())
-                .content(postReport.getSellPost().getDescription())
-                .writerId(postReport.getSellPost().getMember().getId())
-                .memberId(postReport.getMember().getId())
-                .createdAt(postReport.getCreatedAt())
-                .memberId(postReport.getMember().getId())
-                .createdAt(postReport.getUpdateAt())
-                .modifiedAt(postReport.getUpdateAt())
-                .postReportCount(postReport.getPostReportCount())
+                .sellPostId(postReport.getSell_post_id())
+                .title(sellPost.getTitle())
+                .content(sellPost.getDescription())
+                .writerId(sellPost.getMember_id())
+                .memberId(postReport.getMember_id())
+                .createdAt(postReport.getCreated_at())
+                .memberId(postReport.getMember_id())
+                .createdAt(postReport.getUpdated_at())
+                .modifiedAt(postReport.getUpdated_at())
+                .postReportCount(postReport.getPost_report_count())
                 .build();
     }
 
