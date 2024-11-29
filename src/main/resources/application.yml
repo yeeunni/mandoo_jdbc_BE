@@ -20,7 +20,7 @@ spring:
     generate-ddl: true
 
 upload:
-  path: /Users/kang-minyoung/uploads/images
+  path: /Users/kang-minyoung/Desktop/mandoo_Frontend/src/images
 
 logging:
   level:
