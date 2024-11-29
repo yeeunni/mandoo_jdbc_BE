@@ -85,6 +85,7 @@ public class ManageController {
     @DeleteMapping("/report/comment")
     public ApiResponse deleteCommentReport(@RequestParam(value="commentId") Long commentId)
     {
+        System.out.println("deleteCommentReport");
         try{
             manageService.deleteCommentReport(commentId);
             return ApiResponse.onSuccess(null);
