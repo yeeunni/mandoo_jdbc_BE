@@ -73,7 +73,7 @@ public class SellPostController {
     }
 
     @GetMapping("/recent") //최신 게시물 조회
-    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> getSellPosts(@RequestParam int page) {
+    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> getSellPosts(@RequestParam("page") int page) {
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
             PageRequest pageRequest = PageRequest.of(page, pageSize);
