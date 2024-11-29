@@ -15,7 +15,7 @@ public class Member {
     private String password;
     private String email;
     private String nickname;
-    private MemberStatus status; // Enum 대신 문자열로 처리
+    private Integer status; // status:0 -> 사용자, status:1 -> 관리자
     private Boolean isLogin;
     private Integer writeSellPostCount;
     private Integer likeSellPostCount;

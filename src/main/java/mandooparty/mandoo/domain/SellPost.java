@@ -15,7 +15,7 @@ public class SellPost {
     private String title;         // 게시물 제목
     private Integer price;        // 상품 가격
     private String description;   // 게시글 설명
-    private String status;        // 게시글 상태 (예: 판매중, 거래완료 등)
+    private Integer status;        // 게시글 상태 (예: 판매중:0, 거래완료:1)
 
     private Long member_id;        // 작성자 ID (Member와의 연관 제거)
     private Integer comment_count; // 댓글 수

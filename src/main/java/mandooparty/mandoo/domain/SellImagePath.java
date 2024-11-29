@@ -10,6 +10,6 @@ import lombok.*;
 public class SellImagePath {
     private Long image_id;
     private Long sell_post_id;
-    private String path; // ì´ë¯¸ì§ ê²½ë¡
+    private String path;
 
 }

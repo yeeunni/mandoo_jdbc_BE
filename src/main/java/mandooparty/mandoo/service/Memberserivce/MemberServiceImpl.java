@@ -42,12 +42,12 @@ public class MemberServiceImpl implements MemberService {
             throw new GlobalException(GlobalErrorCode.DUPLICATE_NICKNAME);
         }
 
-        // String status 값을 MemberStatus enum으로 변환
-        MemberStatus memberStatus;
+        // String status 값을 int형으로 변환
+       int memberStatus;
         if ("user".equalsIgnoreCase(status)) {
-            memberStatus = MemberStatus.USER;
+            memberStatus = 0;
         } else if ("manager".equalsIgnoreCase(status)) {
-            memberStatus = MemberStatus.MANAGER;
+            memberStatus = 1;
         } else {
             throw new GlobalException(GlobalErrorCode.INVALID_MEMBER_STATUS);
         }
