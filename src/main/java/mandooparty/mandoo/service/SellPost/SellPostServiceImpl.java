@@ -209,6 +209,9 @@ public class SellPostServiceImpl implements SellPostService {
         sellPost.setDescription(rs.getString("description"));
         sellPost.setPrice(rs.getInt("price"));
         sellPost.setCity(rs.getString("city"));
+        sellPost.setMember_id(rs.getLong("member_id"));
+        sellPost.setLike_count(rs.getInt("like_count"));
+        sellPost.setComment_count(rs.getInt("comment_count"));
         sellPost.setGu(rs.getString("gu"));
         sellPost.setDong(rs.getString("dong"));
         sellPost.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());

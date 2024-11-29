@@ -1,7 +1,6 @@
 package mandooparty.mandoo.service.ManageService;
 
 
-import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import mandooparty.mandoo.converter.ManageConverter;
 import mandooparty.mandoo.domain.*;
