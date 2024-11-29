@@ -63,8 +63,8 @@ public class MemberServiceImpl implements MemberService {
                 .created_at(LocalDateTime.now())
                 .updated_at(LocalDateTime.now())
                 .build();
-        memberRepository.insertMember(member);
-        return member;
+        Member saveData=memberRepository.insertMember(member);
+        return saveData;
     }
 
     @Override
@@ -79,6 +79,10 @@ public class MemberServiceImpl implements MemberService {
 
             if (password.equals(member.getPassword())) { //만약 요청의 패스워드마저 같으면
                 boolean updated = memberRepository.updateLoginStatusByEmail(email, 1);
+
+                LocalDateTime currentLoginTime = LocalDateTime.now(); // 현재 시간
+                boolean updatedLoginTime = memberRepository.updateLoginTimeByEmail(email, currentLoginTime);
+
                 member.setLogin_time(LocalDateTime.now());
                 return memberLoginResponseDto(member); //사용자의 정보를 return해준다.
             } else {
@@ -88,6 +92,7 @@ public class MemberServiceImpl implements MemberService {
             throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND); //해당 이메일로 가입되어 있지 않습니다.
         }
     }
+
     @Override
     @Transactional
     public MemberDTO.MemberLoginResponseDto logoutMember(MemberDTO.MemberLogoutDto request) {

@@ -43,7 +43,7 @@ public class SellPostRepository {
         }
     }
 
-    public boolean insertSellPost(SellPost sellPost) {
+    public SellPost insertSellPost(SellPost sellPost) {
         String sql = "INSERT INTO sellpost (title, price, description, city, gu, dong, member_id, created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -64,11 +64,16 @@ public class SellPostRepository {
         }, keyHolder);
 
         if (rowsAffected > 0) {
+            // 키값을 받아서 sellPost 객체에 설정
             sellPost.setSell_post_id(keyHolder.getKey().longValue());
-            return true;
+            sellPost.setComment_count(0);
+            sellPost.setLike_count(0);
+            return sellPost; // 삽입된 SellPost 객체를 반환
         }
-        return false;
+
+        return null; // 삽입 실패시 null 반환
     }
+
 
 
     public boolean insertSellPostCategory(Long sellPostId, Long categoryId) {

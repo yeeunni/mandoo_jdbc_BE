@@ -49,8 +49,8 @@ public class SellPostServiceImpl implements SellPostService {
         SellPost sellPost = sellPostConverter.sellPostCreateDto(request, member);
 
         // 게시물 데이터 삽입 (레포지토리 사용)
-        boolean isInserted = sellPostRepository.insertSellPost(sellPost);
-        if (!isInserted) {
+        SellPost saveData = sellPostRepository.insertSellPost(sellPost);
+        if (saveData==null) {
             throw new RuntimeException("Failed to insert SellPost into the database.");
         }
 
@@ -91,7 +91,7 @@ public class SellPostServiceImpl implements SellPostService {
             }
         }
 
-        return SellPostConverter.sellPostResponseDto(sellPost);
+        return SellPostConverter.sellPostResponseDto(saveData);
     }
 
     @Override

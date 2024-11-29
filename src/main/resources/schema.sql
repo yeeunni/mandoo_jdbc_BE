@@ -9,9 +9,11 @@ CREATE TABLE IF NOT EXISTS `Member` (
    `like_sell_post_count` INT NOT NULL DEFAULT 0,
    `completed_sell_post_count` INT NULL DEFAULT 0,
    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `login_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`)
 );
+
 
 CREATE TABLE IF NOT EXISTS `SellPost` (
    `sell_post_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -103,3 +105,5 @@ CREATE TABLE IF NOT EXISTS `SellImagePath` (
    PRIMARY KEY (`image_id`),
    FOREIGN KEY (`sell_post_id`) REFERENCES `SellPost`(`sell_post_id`) ON DELETE CASCADE
 );
+
+

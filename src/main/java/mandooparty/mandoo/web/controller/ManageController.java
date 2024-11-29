@@ -19,7 +19,7 @@ import java.util.List;
 public class ManageController {
     private final ManageService manageService;
     @GetMapping("/dashboard")//관리자 페이지 dashboard
-    public ApiResponse<ManageDTO.ManageDashBoardDto> ManageDashBoard(){//데이터 양 안 정함 -> 수정 필요
+    public ApiResponse<ManageDTO.ManageDashBoardDto> ManageDashBoard(){
         List<ManageDTO.ManageDashBoardSellPostDto> sellPostCountList=manageService.getDaySellPostCount();
         List<ManageDTO.ManageDashBoardCategoryRatioDto> categoryRatio=manageService.getCategoryRatio();
         List<ManageDTO.ManageDashBoardDateViewDto> dateView=manageService.getDateView();
