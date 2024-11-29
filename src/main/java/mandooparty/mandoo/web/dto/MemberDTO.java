@@ -64,7 +64,7 @@ public class MemberDTO {
         private String email;
         private String nickname;
         private String status;
-        private Boolean isLogin;
+        private Integer isLogin;
     }
 
 

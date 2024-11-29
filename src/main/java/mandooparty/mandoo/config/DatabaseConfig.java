@@ -14,7 +14,7 @@ public class DatabaseConfig {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/mandoo_dev");
         dataSource.setUsername("root");
-        dataSource.setPassword("hurmong7942@");
+        dataSource.setPassword("MySQL0621#");
         return dataSource;
     }
 

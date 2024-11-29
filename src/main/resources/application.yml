@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mandoo_dev
     username: root
-    password: hurmong7942@
+    password: MySQL0621#
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -20,4 +20,10 @@ spring:
     generate-ddl: true
 
 upload:
-  path: D:\\image
+  path: "C:\\Users\\USER\\Desktop\\mandoo_image"
+
+
+logging:
+  level:
+    root: INFO  # INFO 이상의 레벨을 출력하도록 설정
+    mandooparty.mandoo: DEBUG  # 특정 패키지에 대해 DEBUG 로그를 출력하도록 설정
