@@ -7,4 +7,6 @@ INSERT INTO category (name) VALUES
 ('카메라/캠코더'),
 ('모바일/탬플릿'),
 ('도서/음반/분류'),
-('노트북/PC');
+('노트북/PC')
+ON DUPLICATE KEY UPDATE name = VALUES(name);
+

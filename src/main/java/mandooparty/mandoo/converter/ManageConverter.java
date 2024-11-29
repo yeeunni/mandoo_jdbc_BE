@@ -31,6 +31,7 @@ public class ManageConverter {
                 .writerId(comment.getMember_id())
                 .sellPostId(comment.getSell_post_id())
                 .commentReportCount(commentReport.getComment_report_count())
+                .status(comment.getComment_status())
                 .createdAt(commentReport.getCreated_at())
                 .modifiedAt(commentReport.getUpdated_at())
                 .build();

@@ -63,7 +63,6 @@ public class ManageDTO {
         private String passWord;
         private String email;
         private Integer status;
-        private String name;
         private String nickName;
         private Integer writeSellPostCount;
         private Integer likeSellPostCount;

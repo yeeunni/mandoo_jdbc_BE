@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      mode: always  # 항상 초기화하도록 설정
+      mode: always
   jpa:
     hibernate:
       ddl-auto: update

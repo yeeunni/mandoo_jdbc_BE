@@ -5,8 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,19 +36,52 @@ public class MemberRepository{
             return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
         }
     }
-    public boolean insertMember(Member member)
-    {
+    public Member insertMember(Member member) {
         String email = member.getEmail();
         String password = member.getPassword();
         String nickname = member.getNickname();
         Integer status = member.getStatus();
-        LocalDateTime createdAt=member.getCreated_at();
-        LocalDateTime updatedAt=member.getUpdated_at();
-        String sql = "INSERT INTO member (email, password, nickname, status,created_at,updated_at) " +
-                "VALUES (?, ?, ?, ?,?,?)";
-        int rowsAffected = jdbcTemplate.update(sql, email, password, nickname, status,createdAt,updatedAt);
-        return rowsAffected > 0;
+        LocalDateTime createdAt = member.getCreated_at();
+        LocalDateTime updatedAt = member.getUpdated_at();
+
+        String sql = "INSERT INTO member (email, password, nickname, status, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        // KeyHolder를 사용하여 자동 생성된 ID 값을 반환
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        int rowsAffected = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ps.setString(3, nickname);
+            ps.setInt(4, status);
+            ps.setObject(5, createdAt);
+            ps.setObject(6, updatedAt);
+            return ps;
+        }, keyHolder);
+
+        if (rowsAffected > 0) {
+            // 자동 생성된 ID 값을 얻어 member에 설정
+            Long generatedId = keyHolder.getKey().longValue();
+            member.setId(generatedId);  // assuming `setId()` method exists in your `Member` class
+            return member;
+        } else {
+            return null;  // 삽입 실패 시 null 반환
+        }
     }
+
+    public boolean updateLoginStatusByEmail(String email, int isLogin) {
+        String sql = "UPDATE member SET is_login = ? WHERE email = ?";
+        int rowsAffected = jdbcTemplate.update(sql, isLogin, email);
+        return rowsAffected > 0; // 업데이트된 행이 있으면 true, 없으면 false 반환
+    }
+    // 로그인 시간을 업데이트하는 메서드
+    public boolean updateLoginTimeByEmail(String email, LocalDateTime loginTime) {
+        String sql = "UPDATE member SET login_time = ? WHERE email = ?";
+        int rowsAffected = jdbcTemplate.update(sql, loginTime, email); // is_login도 함께 업데이트
+        return rowsAffected > 0; // 업데이트된 행이 있으면 true, 없으면 false 반환
+    }
+
 
     public Optional<Member> findByEmail(String email) {
         String sql = "SELECT * FROM Member WHERE email = ?";

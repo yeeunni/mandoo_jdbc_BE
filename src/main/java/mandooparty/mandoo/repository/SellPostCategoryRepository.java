@@ -18,20 +18,20 @@ public class SellPostCategoryRepository {
     private JdbcTemplate jdbcTemplate;
 
     public List<Map<String, Object>> countCategory() {
-        String sql = "SELECT c.name AS categoryName, " +
+        String sql = "SELECT c.name AS name, " +
                 "COUNT(*) AS count, " +
-                "(COUNT(*) * 1.0 / (SELECT COUNT(*) FROM sell_post_category)) * 100 AS percentage " +
-                "FROM sell_post_category sp " +
-                "JOIN category c ON sp.category_id = c.id " +
-                "GROUP BY c.id, c.name";
+                "(COUNT(*) * 1.0 / (SELECT COUNT(*) FROM sellpostcategory)) * 100 AS ratio " +
+                "FROM sellpostcategory sp " +
+                "JOIN category c ON sp.sell_post_category_id = c.category_id " +
+                "GROUP BY c.category_id, c.name";
 
         return jdbcTemplate.query(sql, new RowMapper<Map<String, Object>>() {
             @Override
             public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Map<String, Object> result = new HashMap<>();
-                result.put("categoryName", rs.getString("categoryName")); // String
+                result.put("name", rs.getString("name")); // String
                 result.put("count", rs.getInt("count"));                 // Integer
-                result.put("percentage", rs.getDouble("percentage"));    // Double
+                result.put("ratio", rs.getDouble("ratio"));    // Double
                 return result;
             }
         });

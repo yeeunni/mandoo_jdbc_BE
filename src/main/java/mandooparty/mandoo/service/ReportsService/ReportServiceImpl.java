@@ -86,7 +86,7 @@ public class ReportServiceImpl implements ReportService{
                         .created_at(LocalDateTime.now())
                         .updated_at(LocalDateTime.now())
                         .build();
-                commentReportRepository.insertCommentReport(commentReport);
+                commentReport=commentReportRepository.insertCommentReport(commentReport);
             }
 
             // 결과를 Map으로 묶어서 반환

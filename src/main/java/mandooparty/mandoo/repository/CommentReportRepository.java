@@ -6,8 +6,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,18 +22,40 @@ public class CommentReportRepository{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public boolean insertCommentReport(CommentReport commentReport)
-    {
+    public CommentReport insertCommentReport(CommentReport commentReport) {
         Integer postReportCount = commentReport.getComment_report_count();
-        Long memberId=commentReport.getMember_id();
-        Long commentId=commentReport.getComment_id();
-        LocalDateTime createdAt=commentReport.getCreated_at();
-        LocalDateTime updatedAt=commentReport.getUpdated_at();
-        String sql = "INSERT INTO commentreport (comment_report_count, member_id,comment_id,created_at,updated_at) " +
-                "VALUES (?, ?, ?, ?,?)";
-        int rowsAffected = jdbcTemplate.update(sql, postReportCount, memberId, commentId, createdAt,updatedAt);
-        return rowsAffected > 0;
+        Long memberId = commentReport.getMember_id();
+        Long commentId = commentReport.getComment_id();
+        LocalDateTime createdAt = commentReport.getCreated_at();
+        LocalDateTime updatedAt = commentReport.getUpdated_at();
+
+        // KeyHolder 객체 생성
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        // INSERT 쿼리
+        String sql = "INSERT INTO commentreport (comment_report_count, member_id, comment_id, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        // PreparedStatementCreator를 사용하여 데이터 삽입 및 KeyHolder로 생성된 키를 받아옴
+        int rowsAffected = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, postReportCount);
+            ps.setLong(2, memberId);
+            ps.setLong(3, commentId);
+            ps.setTimestamp(4, Timestamp.valueOf(createdAt));
+            ps.setTimestamp(5, Timestamp.valueOf(updatedAt));
+            return ps;
+        }, keyHolder);
+
+        // 삽입 성공 시 자동 생성된 ID를 CommentReport 객체에 설정
+        if (rowsAffected > 0) {
+            commentReport.setId(keyHolder.getKey().longValue());  // 자동 생성된 ID 설정
+        }
+
+        // 삽입된 CommentReport 객체 반환
+        return commentReport;
     }
+
 
     public List<CommentReport> findAll(String order) {
         String sql = "SELECT c.* FROM commentreport AS c";
