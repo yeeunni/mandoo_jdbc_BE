@@ -6,10 +6,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      mode: always  # 항상 초기화하도록 설정
+      mode: always
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
 
     properties:
@@ -20,7 +20,8 @@ spring:
     generate-ddl: true
 
 upload:
-  path: /Users/kang-minyoung/Desktop/mandoo_Frontend/src/images
+  path: "C:\\Users\\USER\\Desktop\\mandoo_image"
+
 
 logging:
   level:

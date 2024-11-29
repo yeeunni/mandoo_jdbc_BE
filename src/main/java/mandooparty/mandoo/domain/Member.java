@@ -1,7 +1,6 @@
 package mandooparty.mandoo.domain;
 
 import lombok.*;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +15,7 @@ public class Member {
     private String email;
     private String nickname;
     private Integer status; // status:0 -> 사용자, status:1 -> 관리자
-    private Boolean is_login;
+    private Integer is_login;
     private Integer write_sell_post_count;
     private Integer like_sell_post_count;
     private LocalDateTime login_time;

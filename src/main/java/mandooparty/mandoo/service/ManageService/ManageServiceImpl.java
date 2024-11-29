@@ -33,7 +33,7 @@ public class ManageServiceImpl implements ManageService {
 
         for (Map<String,Object> row : result) {
             // Tuple에서 값을 추출
-            LocalDate date = (LocalDate) row.get("created_at") ;// 첫 번째 값은 날짜
+            LocalDate date = (LocalDate) row.get("createDate") ;// 첫 번째 값은 날짜
             Integer sellPostCount = ((Number)row.get("count")).intValue();   // 두 번째 값은 sellpost 개수
 
             // DTO 객체 생성하여 리스트에 추가
@@ -59,13 +59,13 @@ public class ManageServiceImpl implements ManageService {
         for (Map<String,Object> row : result) {
             // Tuple에서 값을 추출
             String name = (String)row.get("name");  // 첫 번째 값은 날짜
-            Long categoryCount = (Long)row.get("category_count");   // 두 번째 값은 sellpost 개수
+            Integer categoryCount = (Integer)row.get("count");   // 두 번째 값은 sellpost 개수
             Double ratio = (Double)row.get("ratio");
 
             // DTO 객체 생성하여 리스트에 추가
             ManageDTO.ManageDashBoardCategoryRatioDto dto = new ManageDTO.ManageDashBoardCategoryRatioDto();
             dto.setName(name);  // 날짜 설정
-            dto.setCategoryCount(categoryCount.intValue());  // 개수 설정 (Long -> Integer로 변환)
+            dto.setCategoryCount(categoryCount);  // 개수 설정 (Long -> Integer로 변환)
             dto.setRatio((int) Math.round(ratio));
 
 

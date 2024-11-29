@@ -2,7 +2,6 @@ package mandooparty.mandoo.service.MyPageService;
 
 import lombok.RequiredArgsConstructor;
 import mandooparty.mandoo.domain.SellPost;
-import mandooparty.mandoo.domain.enums.SellPostStatus;
 import mandooparty.mandoo.repository.LikesRepository;
 import mandooparty.mandoo.repository.SellPostRepository;
 import mandooparty.mandoo.service.Memberserivce.MemberService;
@@ -22,12 +21,12 @@ public class MyPageServiceImpl implements MyPageService {
 
     public List<SellPost> getSoldPost(Long memberId)
     {
-        return sellPostRepository.findByMemberAndStatus(memberId,SellPostStatus.SOLD_OUT);//수정필요 + page 사용해야함
+        return sellPostRepository.findByMemberAndStatus(memberId,1);//수정필요 + page 사용해야함
     }
 
     public List<SellPost> getSellPost(Long memberId)
     {
-        return sellPostRepository.findByMemberAndStatus(memberId,SellPostStatus.FOR_SALE);//수정필요 + page 사용해야함
+        return sellPostRepository.findByMemberAndStatus(memberId,0);//수정필요 + page 사용해야함
     }
 
 }

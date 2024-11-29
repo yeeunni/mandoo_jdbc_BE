@@ -1,7 +1,6 @@
 package mandooparty.mandoo.web.dto;
 
 import lombok.*;
-import mandooparty.mandoo.domain.enums.CommentStatus;
 
 import java.time.LocalDateTime;
 
@@ -45,7 +44,7 @@ public class CommentDTO {
     public static class CommentUpdateDto {
         private Long commentId;         // 댓글 ID
         private String content;         // 수정할 댓글 내용
-        private CommentStatus commentStatus; // 수정할 댓글 공개 여부
+        private Integer commentStatus; // 수정할 댓글 공개 여부
     }
 
     @Builder

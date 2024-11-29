@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mandooparty.mandoo.converter.MemberConverter;
 import mandooparty.mandoo.domain.Member;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import mandooparty.mandoo.exception.GlobalErrorCode;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.MemberRepository;
@@ -56,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
                 .password(password)
                 .status(memberStatus) // Enum 값을 문자열로 저장
                 .nickname(nickname)
-                .is_login(false) // 기본값 설정
+                .is_login(0) // 기본값 설정
                 .write_sell_post_count(0) // 기본값 설정
                 .like_sell_post_count(0) // 기본값 설정
                 .completed_sell_post_count(0) // 기본값 설정
@@ -64,8 +63,8 @@ public class MemberServiceImpl implements MemberService {
                 .created_at(LocalDateTime.now())
                 .updated_at(LocalDateTime.now())
                 .build();
-        memberRepository.insertMember(member);
-        return member;
+        Member saveData=memberRepository.insertMember(member);
+        return saveData;
     }
 
     @Override
@@ -79,7 +78,11 @@ public class MemberServiceImpl implements MemberService {
             Member member = findMemberByEmail.get(); //사용자 객체를 가져옴
 
             if (password.equals(member.getPassword())) { //만약 요청의 패스워드마저 같으면
-                member.setIs_login(true);
+                boolean updated = memberRepository.updateLoginStatusByEmail(email, 1);
+
+                LocalDateTime currentLoginTime = LocalDateTime.now(); // 현재 시간
+                boolean updatedLoginTime = memberRepository.updateLoginTimeByEmail(email, currentLoginTime);
+
                 member.setLogin_time(LocalDateTime.now());
                 return memberLoginResponseDto(member); //사용자의 정보를 return해준다.
             } else {
@@ -89,6 +92,7 @@ public class MemberServiceImpl implements MemberService {
             throw new GlobalException(GlobalErrorCode.MEMBER_NOT_FOUND); //해당 이메일로 가입되어 있지 않습니다.
         }
     }
+
     @Override
     @Transactional
     public MemberDTO.MemberLoginResponseDto logoutMember(MemberDTO.MemberLogoutDto request) {
@@ -99,8 +103,9 @@ public class MemberServiceImpl implements MemberService {
             Member member = findMemberByEmail.get();
 
             // 로그인 상태인지 확인
-            if (member.getIs_login()) { //isLogin이 true면 -> 사용자가 로그인중이라는 뜻
-                member.setIs_login(false);  // isLogin 상태를 false로 설정하여 로그아웃 처리
+            if (member.getIs_login()==1) { //isLogin이 true면 -> 사용자가 로그인중이라는 뜻
+                // isLogin 상태를 false로 설정하여 로그아웃 처리
+                boolean updated = memberRepository.updateLoginStatusByEmail(email, 0);
                 return memberLoginResponseDto(member); // 로그아웃 완료 후 정보 반환
             } else {
                 throw new GlobalException(GlobalErrorCode.ALREADY_LOGGED_OUT); // 이미 로그아웃 상태일 때 예외 발생
@@ -117,7 +122,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (findMember.isPresent()) { //사용자가 있고
             Member member = findMember.get();
-            if (member.getIs_login()){ //로그인 상태이고
+            if (member.getIs_login()==1){ //로그인 상태이고
                 memberRepository.deleteById(memberId); // JPA 기본 메서드 사용
             }else{
                 throw new GlobalException(GlobalErrorCode.ALREADY_LOGGED_OUT); // 이미 로그아웃 상태일 때 예외 발생

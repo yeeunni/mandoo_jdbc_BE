@@ -15,6 +15,7 @@ public class DatabaseConfig {
         dataSource.setUrl("jdbc:mysql://localhost:3306/mandoo_dev");
         dataSource.setUsername("root");
         dataSource.setPassword("12345678");
+
         return dataSource;
     }
 

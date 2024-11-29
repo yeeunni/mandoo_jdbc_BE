@@ -101,7 +101,7 @@ public class SellPostServiceImpl implements SellPostService {
             }
         }
 
-        return SellPostConverter.sellPostResponseDto(sellPost);
+        return SellPostConverter.sellPostResponseDto(saveData);
     }
 
     @Override

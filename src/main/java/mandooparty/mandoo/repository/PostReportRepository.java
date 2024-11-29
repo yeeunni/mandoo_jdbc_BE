@@ -3,7 +3,6 @@ package mandooparty.mandoo.repository;
 import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.PostReport;
 import mandooparty.mandoo.domain.SellPost;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;

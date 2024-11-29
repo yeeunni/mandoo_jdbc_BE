@@ -1,7 +1,6 @@
 package mandooparty.mandoo.converter;
 
 import mandooparty.mandoo.domain.Member;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import mandooparty.mandoo.web.dto.MemberDTO;
 import org.springframework.stereotype.Component;
 
