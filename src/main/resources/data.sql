@@ -10,3 +10,4 @@ INSERT INTO category (name) VALUES
 ('노트북/PC')
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 
+

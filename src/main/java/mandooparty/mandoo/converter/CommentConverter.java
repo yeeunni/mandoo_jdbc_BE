@@ -27,7 +27,6 @@ public class CommentConverter {
                 .content(comment.getContent())
                 .commentStatus(comment.getComment_status())
                 .memberId(comment.getMember_id())
-                .memberNickname(member.getNickname())
                 .sellPostId(comment.getSell_post_id())
                 .parentCommentId(comment.getParent_comment_id() != null ? comment.getParent_comment_id() : null)
                 .createdAt(comment.getCreated_at())

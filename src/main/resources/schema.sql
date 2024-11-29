@@ -106,4 +106,3 @@ CREATE TABLE IF NOT EXISTS `SellImagePath` (
    FOREIGN KEY (`sell_post_id`) REFERENCES `SellPost`(`sell_post_id`) ON DELETE CASCADE
 );
 
-

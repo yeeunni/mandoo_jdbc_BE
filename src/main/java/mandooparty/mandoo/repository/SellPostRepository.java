@@ -74,6 +74,20 @@ public class SellPostRepository {
         return null; // 삽입 실패시 null 반환
     }
 
+    public List<String> findCategoriesBySellPostId(Long sellPostId) {
+        String sql = "SELECT c.name FROM category c " +
+                "JOIN sellpostcategory sc ON c.category_id = sc.category_id " +
+                "WHERE sc.sellpost_id = ?";
+        return jdbcTemplate.queryForList(sql, new Object[]{sellPostId}, String.class);
+
+    }
+
+    public List<String> findImagesBySellPostId(Long sellPostId) {
+        String sql = "SELECT path FROM sellimagepath WHERE sellpost_id = ?";
+        return jdbcTemplate.queryForList(sql, new Object[]{sellPostId}, String.class);
+    }
+
+
 
 
     public boolean insertSellPostCategory(Long sellPostId, Long categoryId) {
@@ -97,6 +111,7 @@ public class SellPostRepository {
             return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
         }
     }
+
 
     public List<SellPost> findByMemberAndStatus(Long memberId,Integer sellPostStatus)
     {
