@@ -24,7 +24,7 @@ public class CommentReportRepository{
         Long commentId=commentReport.getComment_id();
         LocalDateTime createdAt=commentReport.getCreated_at();
         LocalDateTime updatedAt=commentReport.getUpdated_at();
-        String sql = "INSERT INTO postreport (comment_report_count, member_id,comment_id,created_at,updated_at) " +
+        String sql = "INSERT INTO commentreport (comment_report_count, member_id,comment_id,created_at,updated_at) " +
                 "VALUES (?, ?, ?, ?,?)";
         int rowsAffected = jdbcTemplate.update(sql, postReportCount, memberId, commentId, createdAt,updatedAt);
         return rowsAffected > 0;

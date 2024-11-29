@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mandooparty.mandoo.domain.enums.SellPostStatus;
+
 
 import java.time.LocalDate;
 

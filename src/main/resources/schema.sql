@@ -1,4 +1,4 @@
-CREATE TABLE `Member` (
+CREATE TABLE IF NOT EXISTS `Member` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
    `password` VARCHAR(45) NOT NULL,
    `email` VARCHAR(45) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `Member` (
    PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `SellPost` (
+CREATE TABLE IF NOT EXISTS `SellPost` (
    `sell_post_id` BIGINT NOT NULL AUTO_INCREMENT,
    `member_id` BIGINT NOT NULL,
    `title` VARCHAR(45) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE `SellPost` (
    FOREIGN KEY (`member_id`) REFERENCES `Member`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `Comment` (
+CREATE TABLE IF NOT EXISTS `Comment` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
    `content` VARCHAR(50) NOT NULL,
    `comment_status` INT NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `Comment` (
    FOREIGN KEY (`parent_comment_id`) REFERENCES `Comment`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `Likes` (
+CREATE TABLE IF NOT EXISTS `Likes` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
    `member_id` BIGINT NOT NULL,
    `sell_post_id` BIGINT NOT NULL,
@@ -56,28 +56,27 @@ CREATE TABLE `Likes` (
    FOREIGN KEY (`sell_post_id`) REFERENCES `SellPost`(`sell_post_id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `Postreport` (
+CREATE TABLE IF NOT EXISTS `Postreport` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
    `sell_post_id` BIGINT NOT NULL,
    `member_id` BIGINT NOT NULL,
    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   `post_report_count` INT NOT NULL DEFAULT 0,  -- 쉼표 추가
+   `post_report_count` INT NOT NULL DEFAULT 0,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`sell_post_id`) REFERENCES `SellPost`(`sell_post_id`) ON DELETE CASCADE,
    FOREIGN KEY (`member_id`) REFERENCES `Member`(`id`) ON DELETE CASCADE
 );
 
-
-CREATE TABLE `Category` (
+CREATE TABLE IF NOT EXISTS `Category` (
    `category_id` BIGINT NOT NULL AUTO_INCREMENT,
    `name` VARCHAR(50) NOT NULL,
    PRIMARY KEY (`category_id`)
 );
 
-CREATE TABLE `Commentreport` (
+CREATE TABLE IF NOT EXISTS `Commentreport` (
    `id` BIGINT NOT NULL AUTO_INCREMENT,
-   `comment_report_count` INT NOT NULL DEFAULT 0,  -- 두 번째 정의를 남기고 첫 번째 정의를 제거
+   `comment_report_count` INT NOT NULL DEFAULT 0,
    `member_id` BIGINT NOT NULL,
    `comment_id` BIGINT NOT NULL,
    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -87,8 +86,7 @@ CREATE TABLE `Commentreport` (
    FOREIGN KEY (`comment_id`) REFERENCES `Comment`(`id`) ON DELETE CASCADE
 );
 
-
-CREATE TABLE `SellPostCategory` (
+CREATE TABLE IF NOT EXISTS `SellPostCategory` (
    `sell_post_category_id` BIGINT NOT NULL AUTO_INCREMENT,
    `category_id` BIGINT NOT NULL,
    `sell_post_id` BIGINT NOT NULL,
@@ -97,8 +95,7 @@ CREATE TABLE `SellPostCategory` (
    FOREIGN KEY (`category_id`) REFERENCES `Category`(`category_id`) ON DELETE CASCADE
 );
 
-
-CREATE TABLE `SellImagePath` (
+CREATE TABLE IF NOT EXISTS `SellImagePath` (
    `image_id` BIGINT NOT NULL AUTO_INCREMENT,
    `sell_post_id` BIGINT NOT NULL,
    `path` VARCHAR(255) NOT NULL,

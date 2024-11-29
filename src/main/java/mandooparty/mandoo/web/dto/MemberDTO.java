@@ -1,6 +1,6 @@
 package mandooparty.mandoo.web.dto;
 import lombok.*;
-import mandooparty.mandoo.domain.enums.MemberStatus;
+
 
 import java.util.List;
 import java.util.Set;

@@ -1,5 +1,4 @@
 package mandooparty.mandoo.domain;
-import mandooparty.mandoo.domain.enums.CommentStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;

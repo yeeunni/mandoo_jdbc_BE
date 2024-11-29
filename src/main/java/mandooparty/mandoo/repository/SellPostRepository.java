@@ -2,7 +2,6 @@ package mandooparty.mandoo.repository;
 
 import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.SellPost;
-import mandooparty.mandoo.domain.enums.SellPostStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +93,7 @@ public class SellPostRepository {
         }
     }
 
-    public List<SellPost> findByMemberAndStatus(Long memberId,SellPostStatus sellPostStatus)
+    public List<SellPost> findByMemberAndStatus(Long memberId,Integer sellPostStatus)
     {
         String sql="SELECT s.* FROM sellpost  AS s WHERE s.member_id = ? AND s.status= ?";
         try {
@@ -135,7 +134,7 @@ public class SellPostRepository {
             public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Map<String, Object> result = new HashMap<>();
                 result.put("createDate", rs.getDate("createDate"));
-                result.put("count", rs.getInt("COUNT(s)"));
+                result.put("count", rs.getInt("count"));
                 return result;
             }
         });

@@ -4,7 +4,6 @@ import mandooparty.mandoo.domain.Comment;
 import mandooparty.mandoo.domain.Likes;
 import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.SellPost;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mandooparty.mandoo.converter.MemberConverter;
 import mandooparty.mandoo.domain.Member;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import mandooparty.mandoo.exception.GlobalErrorCode;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.MemberRepository;

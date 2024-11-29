@@ -1,7 +1,6 @@
 package mandooparty.mandoo.domain;
 
 import lombok.*;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 
 import java.time.LocalDateTime;
 
