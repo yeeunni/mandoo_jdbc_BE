@@ -1,5 +1,6 @@
 package mandooparty.mandoo.service.SellPost;
 
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import mandooparty.mandoo.converter.SellPostConverter;
 import mandooparty.mandoo.domain.*;
@@ -7,6 +8,7 @@ import mandooparty.mandoo.exception.GlobalErrorCode;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.*;
 import mandooparty.mandoo.web.dto.SellPostDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,8 +29,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SellPostServiceImpl implements SellPostService {
 
+    @Autowired
+    private SellPostRepository sellPostRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private SellImagePathRepository sellImagePathRepository;
+
     private final MemberRepository memberRepository;
-    private final SellPostRepository sellPostRepository;
     private final SellPostConverter sellPostConverter;
     private final JdbcTemplate jdbcTemplate;
 
@@ -49,10 +57,8 @@ public class SellPostServiceImpl implements SellPostService {
         SellPost sellPost = sellPostConverter.sellPostCreateDto(request, member);
 
         // 게시물 데이터 삽입 (레포지토리 사용)
-        boolean isInserted = sellPostRepository.insertSellPost(sellPost);
-        if (!isInserted) {
-            throw new RuntimeException("Failed to insert SellPost into the database.");
-        }
+        sellPost = sellPostRepository.insertSellPost(sellPost);
+
 
         // 카테고리 처리
         List<Long> categoryIds = Optional.ofNullable(request.getCategoryIds()).orElse(Collections.emptyList());
@@ -96,13 +102,10 @@ public class SellPostServiceImpl implements SellPostService {
 
     @Override
     public SellPostDTO.SellPostResponseDto getSellPostById(Long id) {
-        String sql = "SELECT * FROM sellpost WHERE sell_post_id = ?";
-        SellPost sellPost = jdbcTemplate.queryForObject(sql, new Object[]{id}, sellPostRowMapper);
-
-        if (sellPost == null) {
-            throw new GlobalException(GlobalErrorCode.POST_NOT_FOUND);
-        }
-
+        // SellPost 조회
+        SellPost sellPost = sellPostRepository.findById(id)
+                .orElseThrow(() -> new GlobalException(GlobalErrorCode.POST_NOT_FOUND));
+        // DTO 변환
         return SellPostConverter.sellPostResponseDto(sellPost);
     }
 
@@ -209,6 +212,9 @@ public class SellPostServiceImpl implements SellPostService {
         sellPost.setDescription(rs.getString("description"));
         sellPost.setPrice(rs.getInt("price"));
         sellPost.setCity(rs.getString("city"));
+        sellPost.setMember_id(rs.getLong("member_id"));
+        sellPost.setLike_count(rs.getInt("like_count"));
+        sellPost.setComment_count(rs.getInt("comment_count"));
         sellPost.setGu(rs.getString("gu"));
         sellPost.setDong(rs.getString("dong"));
         sellPost.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());

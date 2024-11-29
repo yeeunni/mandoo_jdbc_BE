@@ -1,7 +1,5 @@
 package mandooparty.mandoo.service.ManageService;
 
-
-import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import mandooparty.mandoo.converter.ManageConverter;
 import mandooparty.mandoo.domain.*;
@@ -9,10 +7,8 @@ import mandooparty.mandoo.exception.GlobalErrorCode;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.*;
 import mandooparty.mandoo.web.dto.ManageDTO;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;

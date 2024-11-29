@@ -4,14 +4,10 @@ import mandooparty.mandoo.domain.Comment;
 import mandooparty.mandoo.domain.Likes;
 import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.SellPost;
-import mandooparty.mandoo.domain.enums.MemberStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

@@ -5,7 +5,10 @@ import mandooparty.mandoo.domain.SellPost;
 import mandooparty.mandoo.domain.Category;
 import mandooparty.mandoo.domain.SellPostCategory;
 import mandooparty.mandoo.domain.SellImagePath;
+import mandooparty.mandoo.repository.CategoryRepository;
+import mandooparty.mandoo.repository.SellImagePathRepository;
 import mandooparty.mandoo.web.dto.SellPostDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,8 +39,21 @@ public class SellPostConverter {
                 .build();
     }
 
+    private static CategoryRepository categoryRepository;
+    private static SellImagePathRepository sellImagePathRepository;
+
+    @Autowired
+    public SellPostConverter(CategoryRepository categoryRepository, SellImagePathRepository sellImagePathRepository) {
+        this.categoryRepository = categoryRepository;
+        this.sellImagePathRepository = sellImagePathRepository;
+    }
+
     // SellPost -> SellPostResponseDto 변환
     public static SellPostDTO.SellPostResponseDto sellPostResponseDto(SellPost sellPost) {
+
+        List<String> categories = categoryRepository.findCategoryNamesBySellPostId(sellPost.getSell_post_id());
+        List<String> images = sellImagePathRepository.findImagePathsBySellPostId(sellPost.getSell_post_id());
+
         return SellPostDTO.SellPostResponseDto.builder()
                 .sellPostId(sellPost.getSell_post_id())   // 게시글 ID 설정
                 .title(sellPost.getTitle())             // 게시글 제목 설정
@@ -50,7 +66,9 @@ public class SellPostConverter {
                 .commentCount(sellPost.getComment_count()) // 댓글 수 설정
                 .createdAt(sellPost.getCreated_at())     // 생성일자 설정
                 .modifiedAt(sellPost.getUpdated_at())   // 수정일자 설정
-                .memberId(sellPost.getMember_id() != null ? sellPost.getMember_id() : null) // memberId 설정
+                .memberId(sellPost.getMember_id())
+                .categories(categories)                 // 카테고리 설정
+                .images(images)                         // 이미지 경로 설정
                 .build();
     }
 
