@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `SellPost` (
 CREATE TABLE IF NOT EXISTS `Comment` (
                                          `id` BIGINT NOT NULL AUTO_INCREMENT,
                                          `content` VARCHAR(50) NOT NULL,
-    `comment_status` INT NOT NULL,
+    `comment_status` INT NOT NULL DEFAULT 0,
     `member_id` BIGINT NOT NULL,
     `sell_post_id` BIGINT NOT NULL,
     `parent_comment_id` BIGINT NULL,

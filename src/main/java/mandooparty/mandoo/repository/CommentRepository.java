@@ -33,17 +33,22 @@ public class CommentRepository {
     }
 
 
-    public boolean insertComment(Comment comment)
-    {
+    public boolean insertComment(Comment comment) {
         String content = comment.getContent();
         Integer status = comment.getComment_status();
         Long memberId = comment.getMember_id();
-        Long parentCommentId = comment.getParent_comment_id();
-        LocalDateTime createdAt=comment.getCreated_at();
-        LocalDateTime updatedAt=comment.getUpdated_at();
-        String sql = "INSERT INTO comment (content, comment_status, member_id, sellpost_id,parent_comment_id) " +
-                "VALUES (?, ?, ?, ?,?,?,?)";
-        int rowsAffected = jdbcTemplate.update(sql, content,status,memberId,parentCommentId,createdAt,updatedAt);
+        Long sellpostId = comment.getSell_post_id();
+        Long parentCommentId = comment.getParent_comment_id(); // 부모 댓글 ID가 null일 가능성 있음
+        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime updatedAt = LocalDateTime.now();
+
+        String sql = "INSERT INTO comment (content, comment_status, member_id, sell_post_id, parent_comment_id, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        int rowsAffected = jdbcTemplate.update(sql, content, status, memberId, sellpostId,
+                parentCommentId != null ? parentCommentId : null, // null 처리
+                createdAt, updatedAt);
+
         return rowsAffected > 0;
     }
 

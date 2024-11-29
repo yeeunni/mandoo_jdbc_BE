@@ -30,7 +30,6 @@ public class CommentDTO {
         private String content;         // 댓글 내용
         private Integer commentStatus; // 댓글 공개 여부
         private Long memberId;          // 작성자 ID
-        private String memberNickname;  // 작성자 닉네임
         private Long sellPostId;        // 게시글 ID
         private Long parentCommentId;   // 부모 댓글 ID (답글일 경우)
         private LocalDateTime createdAt;  // 작성일
