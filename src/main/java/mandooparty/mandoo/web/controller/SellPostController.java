@@ -84,5 +84,17 @@ public class SellPostController {
 
     }
 
+    @PostMapping("/search")
+    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page){
+        try {
+            int pageSize = 9; // 한 페이지에 가져올 게시글 수
+            PageRequest pageRequest = PageRequest.of(page, pageSize);
+            return ApiResponse.onSuccess(sellPostService.searchKeyword(pageRequest,keyword));
+        } catch (GlobalException e) {
+            return ApiResponse.onFailure(e.getErrorCode(), null);
+        }
+    }
+
+
 
 }

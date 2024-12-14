@@ -75,7 +75,13 @@ public class DatabaseInitializer implements CommandLineRunner{
         }
 
 
+        String checkIndex = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND INDEX_NAME = ?";
+        Integer countIndex = jdbcTemplate.queryForObject(checkIndex, new Object[]{"mandoo_dev", "sellpost", "idx_title"}, Integer.class);
 
+        if (countIndex == null || countIndex == 0) {
+            String createIndex = "CREATE FULLTEXT INDEX idx_title ON sellpost (title) WITH PARSER ngram;";
+            jdbcTemplate.execute(createIndex);
+        }
     }
 
 
