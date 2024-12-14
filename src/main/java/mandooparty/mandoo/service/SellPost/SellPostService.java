@@ -21,4 +21,6 @@ public interface SellPostService {
     SellPostDTO.SellPostResponseDto updateSellPost(Long postId, SellPostDTO.SellPostUpdateDto request);
     public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts (Pageable pageable);
 
+    public Page<SellPostDTO.SellPostResponseDto> searchKeyword(Pageable pageable,String keyword);
+
 }

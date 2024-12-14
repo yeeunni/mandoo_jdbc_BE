@@ -241,5 +241,29 @@ public class SellPostRepository {
         return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
     }
 
+    public List<SellPost> searchByKeyword(Pageable pageable, String keyword) {
+        // OFFSET 계산 (page * size)
+        int offset = pageable.getPageNumber() * pageable.getPageSize();
+        int limit = pageable.getPageSize();
+
+        // SQL에 LIMIT과 OFFSET 반영
+        String sql = "SELECT * FROM sellpost WHERE MATCH(title) AGAINST(?) LIMIT ? OFFSET ?";
+
+        // keyword, limit, offset 순서로 바인딩
+        List<SellPost> sellPosts = jdbcTemplate.query(sql, new Object[]{keyword, limit, offset}, new RowMapper<SellPost>() {
+            @Override
+            public SellPost mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return SellPost.builder()
+                        .sell_post_id(rs.getLong("sell_post_id")) // 또는 "sell_post_id"로 수정
+                        .created_at(rs.getTimestamp("created_at").toLocalDateTime())
+                        .title(rs.getString("title"))
+                        .description(rs.getString("description"))
+                        .build();
+            }
+        });
+
+        return sellPosts;
+    }
+
 }
 

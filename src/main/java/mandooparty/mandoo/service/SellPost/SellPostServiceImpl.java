@@ -243,5 +243,21 @@ public class SellPostServiceImpl implements SellPostService {
         category.setName(rs.getString("name"));
         return category;
     };
-}
 
+    public Page<SellPostDTO.SellPostResponseDto> searchKeyword(Pageable pageable, String keyword) {
+
+        List<SellPost> sellPosts = sellPostRepository.searchByKeyword(pageable, keyword);
+
+        String countSql = "SELECT COUNT(*) FROM sellpost";
+        int totalElements = jdbcTemplate.queryForObject(countSql, Integer.class);
+
+        return new PageImpl<>(
+                sellPosts.stream()
+                        .map(SellPostConverter::sellPostResponseDto)
+                        .collect(Collectors.toList()),
+                pageable,
+                totalElements
+        );
+
+    }
+}
