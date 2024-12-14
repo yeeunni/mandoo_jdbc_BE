@@ -20,7 +20,7 @@ spring:
     generate-ddl: true
 
 upload:
-  path: "C:\\Users\\USER\\Desktop\\mandoo_front\\mandoo_Frontend\\src\\images"
+  path: "D:\\mandoo_Frontend\\src\\images"
 
 
 logging:

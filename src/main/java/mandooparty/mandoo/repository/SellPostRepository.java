@@ -258,6 +258,13 @@ public class SellPostRepository {
                         .created_at(rs.getTimestamp("created_at").toLocalDateTime())
                         .title(rs.getString("title"))
                         .description(rs.getString("description"))
+                        .city(rs.getString("city"))
+                        .gu(rs.getString("gu"))
+                        .dong(rs.getString("dong"))
+                        .member_id(rs.getLong("member_id"))
+                        .price(rs.getInt("price"))
+                        .status(rs.getInt("status"))
+                        .updated_at(rs.getTimestamp("updated_at").toLocalDateTime())
                         .build();
             }
         });
