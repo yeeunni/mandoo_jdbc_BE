@@ -167,7 +167,7 @@ public class SellPostServiceImpl implements SellPostService {
         }
 
         // 게시물 업데이트
-        String updatePostSql = "UPDATE sellpost SET title = ?, price = ?, description = ?, city = ?, gu = ?, dong = ? WHERE sell_post_id = ?";
+        String updatePostSql = "UPDATE sellpost SET title = ?, price = ?, description = ?, city = ?, gu = ?, dong = ?,status = ? WHERE sell_post_id = ?";
         jdbcTemplate.update(updatePostSql,
                 request.getTitle(),
                 Optional.ofNullable(request.getPrice()).orElse(0),
@@ -175,6 +175,7 @@ public class SellPostServiceImpl implements SellPostService {
                 request.getCity(),
                 request.getGu(),
                 request.getDong(),
+                request.getStatus(),
                 sellPostId
         );
 
@@ -221,6 +222,7 @@ public class SellPostServiceImpl implements SellPostService {
         sellPost.setLike_count(rs.getInt("like_count"));
         sellPost.setComment_count(rs.getInt("comment_count"));
         sellPost.setGu(rs.getString("gu"));
+        sellPost.setStatus(rs.getInt("status"));
         sellPost.setDong(rs.getString("dong"));
         sellPost.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());
         sellPost.setUpdated_at(rs.getTimestamp("updated_at").toLocalDateTime());
