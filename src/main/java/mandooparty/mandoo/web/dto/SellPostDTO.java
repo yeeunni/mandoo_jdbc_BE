@@ -42,6 +42,7 @@ public class SellPostDTO {
         private String city;
         private String gu;
         private String dong;
+        private Integer status;
         private List<Long> categoryIds;
         private Long memberId;
 
@@ -85,6 +86,7 @@ public class SellPostDTO {
         private String gu;
         private String dong;
         private Long memberId;
+        private Integer status;
         private List<Long> categoryIds;
         private List<MultipartFile> images;
     }

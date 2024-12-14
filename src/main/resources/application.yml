@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mandoo_dev
     username: root
-    password: 12345678
+    password: MySQL0621#
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -20,7 +20,7 @@ spring:
     generate-ddl: true
 
 upload:
-  path: "C:\\Users\\USER\\Desktop\\mandoo_image"
+  path: "C:\\Users\\USER\\Desktop\\mandoo_front\\mandoo_Frontend\\src\\images"
 
 
 logging:

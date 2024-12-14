@@ -35,6 +35,7 @@ public class SellPostConverter {
                 .city(dto.getCity())
                 .gu(dto.getGu())
                 .dong(dto.getDong())
+                .status(dto.getStatus())
                 .member_id(member.getId())
                 .created_at(LocalDateTime.now())     // 생성일자 설정
                 .updated_at(LocalDateTime.now())   // 수정일자 설정
@@ -70,6 +71,7 @@ public class SellPostConverter {
                 .dong(sellPost.getDong())               // 게시물 위치 - 동 설정
                 .likeCount(sellPost.getLike_count())     // 좋아요 수 설정
                 .commentCount(sellPost.getComment_count()) // 댓글 수 설정
+                .status(sellPost.getStatus())
                 .createdAt(sellPost.getCreated_at())     // 생성일자 설정
                 .modifiedAt(sellPost.getUpdated_at())   // 수정일자 설정
                 .memberId(sellPost.getMember_id())
