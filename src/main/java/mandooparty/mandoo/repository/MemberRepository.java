@@ -96,11 +96,11 @@ public class MemberRepository{
             return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
         }
     }
-    public boolean updateLoginStatusByEmail(String email, int isLogin) {
-        String sql = "UPDATE member SET is_login = ? WHERE email = ?";
-        int rowsAffected = jdbcTemplate.update(sql, isLogin, email);
-        return rowsAffected > 0; // 업데이트된 행이 있으면 true, 없으면 false 반환
-    }
+//    public boolean updateLoginStatusByEmail(String email, int isLogin) {
+//        String sql = "UPDATE Member SET is_login = ? WHERE email = ?";
+//        int rowsAffected = jdbcTemplate.update(sql, isLogin, email);
+//        return rowsAffected > 0; // 업데이트된 행이 있으면 true, 없으면 false 반환
+//    }
 
     public Optional<Member> findByNickname(String nickname) {
         String sql = "SELECT * FROM Member WHERE nickname = ?";
