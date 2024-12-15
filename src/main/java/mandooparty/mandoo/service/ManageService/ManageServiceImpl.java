@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,7 +34,8 @@ public class ManageServiceImpl implements ManageService {
 
         for (Map<String,Object> row : result) {
             // Tuple에서 값을 추출
-            LocalDate date = (LocalDate) row.get("createDate") ;// 첫 번째 값은 날짜
+
+            LocalDate date = ((Date) row.get("createDate")).toLocalDate();// 첫 번째 값은 날짜
             Integer sellPostCount = ((Number)row.get("count")).intValue();   // 두 번째 값은 sellpost 개수
 
             // DTO 객체 생성하여 리스트에 추가

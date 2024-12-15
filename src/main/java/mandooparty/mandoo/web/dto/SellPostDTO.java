@@ -70,6 +70,7 @@ public class SellPostDTO {
         private LocalDateTime modifiedAt;
         private List<String> categories;
         private List<String> images;
+        private Integer likeExists;
         private List<CommentDTO.CommentResponseDto> comments; // 댓글 리스트 추가
     }
 

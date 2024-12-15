@@ -44,9 +44,10 @@ public class SellPostController {
 
     // 게시글 조회 요청 처리
     @GetMapping("/read/{sellPostId}")
-    public ApiResponse<SellPostDTO.SellPostResponseDto> getSellPost(@PathVariable("sellPostId") Long sellPostId) {
+    public ApiResponse<SellPostDTO.SellPostResponseDto> getSellPost(@PathVariable("sellPostId") Long sellPostId,
+                                                                    @RequestParam(value="memberId", defaultValue = "-1") Long memberId) {
         try {
-            return ApiResponse.onSuccess(sellPostService.getSellPostById(sellPostId));
+            return ApiResponse.onSuccess(sellPostService.getSellPostById(sellPostId,memberId));
         } catch (GlobalException e) {
             return ApiResponse.onFailure(e.getErrorCode(), null);
         }
@@ -73,27 +74,29 @@ public class SellPostController {
     }
 
     @GetMapping("/recent") //최신 게시물 조회
-    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> getSellPosts(@RequestParam("page") int page) {
+    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> getSellPosts(@RequestParam("page") int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId) {
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
             PageRequest pageRequest = PageRequest.of(page, pageSize);
-            return ApiResponse.onSuccess(sellPostService.getRecentSellPosts(pageRequest));
+            return ApiResponse.onSuccess(sellPostService.getRecentSellPosts(pageRequest,memberId));
         } catch (GlobalException e) {
             return ApiResponse.onFailure(e.getErrorCode(), null);
         }
 
     }
 
-    @PostMapping("/search")
-    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page){
+    @GetMapping("/search")
+    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId){
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
             PageRequest pageRequest = PageRequest.of(page, pageSize);
-            return ApiResponse.onSuccess(sellPostService.searchKeyword(pageRequest,keyword));
+            return ApiResponse.onSuccess(sellPostService.searchKeyword(pageRequest,keyword,memberId));
         } catch (GlobalException e) {
             return ApiResponse.onFailure(e.getErrorCode(), null);
         }
     }
+
+
 
 
 

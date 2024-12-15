@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS `Postreport` (
 CREATE TABLE IF NOT EXISTS `Category` (
    `category_id` BIGINT NOT NULL AUTO_INCREMENT,
    `name` VARCHAR(50) NOT NULL,
-   PRIMARY KEY (`category_id`)
+   PRIMARY KEY (`category_id`),
+   UNIQUE (`name`)
 );
 
 CREATE TABLE IF NOT EXISTS `Commentreport` (

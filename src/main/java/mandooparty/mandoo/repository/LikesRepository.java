@@ -23,7 +23,7 @@ public class LikesRepository{
     private JdbcTemplate jdbcTemplate;
     public List<SellPost> findByMemberId(Long memberId) {
         String sql = "SELECT sp.* FROM sellpost AS sp " +
-                "JOIN likes AS l ON sp.id = l.sellpost_id " +
+                "JOIN likes AS l ON sp.sell_post_id = l.sell_post_id " +
                 "WHERE l.member_id = ?";
 
         try {
