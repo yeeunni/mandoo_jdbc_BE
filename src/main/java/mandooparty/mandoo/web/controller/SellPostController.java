@@ -86,6 +86,7 @@ public class SellPostController {
 
     @GetMapping("/sellpost/search")
     public ApiResponse<Page<SellPostDTO.SellPostResponseWithLikeDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId){
+
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
             PageRequest pageRequest = PageRequest.of(page, pageSize);
