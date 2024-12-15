@@ -22,7 +22,7 @@ public class SellPostCategoryRepository {
                 "COUNT(*) AS count, " +
                 "(COUNT(*) * 1.0 / (SELECT COUNT(*) FROM sellpostcategory)) * 100 AS ratio " +
                 "FROM sellpostcategory sp " +
-                "JOIN category c ON sp.sell_post_category_id = c.category_id " +
+                "JOIN category c ON sp.category_id = c.category_id " +
                 "GROUP BY c.category_id, c.name";
 
         return jdbcTemplate.query(sql, new RowMapper<Map<String, Object>>() {
