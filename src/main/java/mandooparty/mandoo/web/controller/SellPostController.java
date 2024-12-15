@@ -44,10 +44,9 @@ public class SellPostController {
 
     // 게시글 조회 요청 처리
     @GetMapping("/read/{sellPostId}")
-    public ApiResponse<SellPostDTO.SellPostResponseDto> getSellPost(@PathVariable("sellPostId") Long sellPostId,
-                                                                    @RequestParam(value="memberId", defaultValue = "-1") Long memberId) {
+    public ApiResponse<SellPostDTO.SellPostResponseDto> getSellPost(@PathVariable("sellPostId") Long sellPostId ) {
         try {
-            return ApiResponse.onSuccess(sellPostService.getSellPostById(sellPostId,memberId));
+            return ApiResponse.onSuccess(sellPostService.getSellPostReadById(sellPostId));
         } catch (GlobalException e) {
             return ApiResponse.onFailure(e.getErrorCode(), null);
         }
@@ -74,7 +73,7 @@ public class SellPostController {
     }
 
     @GetMapping("/recent") //최신 게시물 조회
-    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> getSellPosts(@RequestParam("page") int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId) {
+    public ApiResponse<Page<SellPostDTO.SellPostResponseWithLikeDto>> getSellPosts(@RequestParam("page") int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId) {
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
             PageRequest pageRequest = PageRequest.of(page, pageSize);
@@ -86,7 +85,8 @@ public class SellPostController {
     }
 
     @GetMapping("/sellpost/search")
-    public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId){
+    public ApiResponse<Page<SellPostDTO.SellPostResponseWithLikeDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page,@RequestParam(value="memberId", defaultValue = "-1") Long memberId){
+
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
             PageRequest pageRequest = PageRequest.of(page, pageSize);
