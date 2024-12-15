@@ -84,7 +84,7 @@ public class SellPostController {
 
     }
 
-    @PostMapping("/search")
+    @GetMapping("/sellpost/search")
     public ApiResponse<Page<SellPostDTO.SellPostResponseDto>> searchKeyword(@RequestParam("keyword") String keyword,@RequestParam("page")int page){
         try {
             int pageSize = 9; // 한 페이지에 가져올 게시글 수
