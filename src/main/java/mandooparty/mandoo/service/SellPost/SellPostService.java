@@ -13,14 +13,15 @@ public interface SellPostService {
     SellPostDTO.SellPostResponseDto SellPostcreate(SellPostDTO.SellPostCreateDto request);
 
     // 게시물 조회
-    SellPostDTO.SellPostResponseDto getSellPostById(Long id);
+    SellPostDTO.SellPostResponseDto getSellPostById(Long id,Long memberId);
+
 
     // 게시물 삭제
     void deleteSellPost(Long id);
     // 게시물 업데이트
     SellPostDTO.SellPostResponseDto updateSellPost(Long postId, SellPostDTO.SellPostUpdateDto request);
-    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts (Pageable pageable);
+    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts(Pageable pageable,Long memberId);
 
-    public Page<SellPostDTO.SellPostResponseDto> searchKeyword(Pageable pageable,String keyword);
+    public Page<SellPostDTO.SellPostResponseDto> searchKeyword(Pageable pageable,String keyword,Long memberId);
 
 }

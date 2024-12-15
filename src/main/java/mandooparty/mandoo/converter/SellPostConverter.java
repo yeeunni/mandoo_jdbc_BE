@@ -38,7 +38,8 @@ public class SellPostConverter {
                 .status(dto.getStatus())
                 .member_id(member.getId())
                 .created_at(LocalDateTime.now())     // 생성일자 설정
-                .updated_at(LocalDateTime.now())   // 수정일자 설정
+                .updated_at(LocalDateTime.now())
+                // 수정일자 설정
                 .build();
     }
 

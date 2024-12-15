@@ -8,6 +8,7 @@ import mandooparty.mandoo.exception.GlobalErrorCode;
 import mandooparty.mandoo.exception.GlobalException;
 import mandooparty.mandoo.repository.*;
 import mandooparty.mandoo.web.dto.CommentDTO;
+import mandooparty.mandoo.web.dto.ReportDTO;
 import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,14 +106,24 @@ public class SellPostServiceImpl implements SellPostService {
     }
 
     @Override
-    public SellPostDTO.SellPostResponseDto getSellPostById(Long id) {
+    public SellPostDTO.SellPostResponseDto getSellPostById(Long id,Long memberId) {
         // SellPost 조회
-        SellPost sellPost = sellPostRepository.findById(id)
+        SellPostDTO.SellPostResponseDto dto  = sellPostRepository.findByIdWithMemberId(id,memberId)
                 .orElseThrow(() -> new GlobalException(GlobalErrorCode.POST_NOT_FOUND));
 
         // DTO 변환
-        return SellPostConverter.sellPostResponseDto(sellPost);
+        return dto;
     }
+
+//    @Override
+//    public SellPostDTO.SellPostResponseDto getSellPostById(Long id) {
+//        // SellPost 조회
+//        SellPost sellPost = sellPostRepository.findById(id)
+//                .orElseThrow(() -> new GlobalException(GlobalErrorCode.POST_NOT_FOUND));
+//
+//        // DTO 변환
+//        return SellPostConverter.sellPostResponseDto(sellPost);
+//    }
 
     @Override
     public SellPostDTO.SellPostResponseDto updateSellPost(Long sellPostId, SellPostDTO.SellPostUpdateDto request) {
@@ -192,20 +203,28 @@ public class SellPostServiceImpl implements SellPostService {
     }
 
     @Override
-    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts(Pageable pageable) {
-        String sql = "SELECT * FROM sellpost ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    public Page<SellPostDTO.SellPostResponseDto> getRecentSellPosts(Pageable pageable,Long memberId) {
+        String sql = "SELECT \n" +
+                "    sp.*,\n" +
+                "    CASE \n" +
+                "        WHEN l.member_id IS NOT NULL THEN true\n" +
+                "        ELSE false\n" +
+                "    END AS is_liked\n" +
+                "FROM sellpost sp\n" +
+                "LEFT JOIN likes l \n" +
+                "    ON sp.sell_post_id = l.sell_post_id AND l.member_id = ?\n" +
+                "ORDER BY sp.created_at DESC\n" +
+                "LIMIT ? OFFSET ?;";
         int limit = pageable.getPageSize();
         int offset = pageable.getPageNumber() * limit;
 
-        List<SellPost> sellPosts = jdbcTemplate.query(sql, new Object[]{limit, offset}, sellPostRowMapper);
+        List<SellPostDTO.SellPostResponseDto> sellPosts = jdbcTemplate.query(sql, new Object[]{memberId,limit, offset}, sellPostWithMemberRowMapper);
 
         String countSql = "SELECT COUNT(*) FROM sellpost";
         int totalElements = jdbcTemplate.queryForObject(countSql, Integer.class);
 
         return new PageImpl<>(
-                sellPosts.stream()
-                        .map(SellPostConverter::sellPostResponseDto)
-                        .collect(Collectors.toList()),
+                sellPosts,
                 pageable,
                 totalElements
         );
@@ -229,6 +248,25 @@ public class SellPostServiceImpl implements SellPostService {
         return sellPost;
     };
 
+    private final RowMapper<SellPostDTO.SellPostResponseDto> sellPostWithMemberRowMapper = (rs, rowNum) -> {
+        SellPostDTO.SellPostResponseDto dto=new SellPostDTO.SellPostResponseDto();
+        dto.setSellPostId(rs.getLong("sell_post_id"));
+        dto.setTitle(rs.getString("title"));
+        dto.setDescription(rs.getString("description"));
+        dto.setPrice(rs.getInt("price"));
+        dto.setCity(rs.getString("city"));
+        dto.setMemberId(rs.getLong("member_id"));
+        dto.setLikeCount(rs.getInt("like_count"));
+        dto.setCommentCount(rs.getInt("comment_count"));
+        dto.setGu(rs.getString("gu"));
+        dto.setStatus(rs.getInt("status"));
+        dto.setDong(rs.getString("dong"));
+        dto.setLikeExists(rs.getInt("is_liked"));
+        dto.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        dto.setModifiedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        return dto;
+    };
+
     private final RowMapper<Member> memberRowMapper = (rs, rowNum) -> {
         Member member = new Member();
         member.setId(rs.getLong("member_id"));
@@ -244,17 +282,15 @@ public class SellPostServiceImpl implements SellPostService {
         return category;
     };
 
-    public Page<SellPostDTO.SellPostResponseDto> searchKeyword(Pageable pageable, String keyword) {
+    public Page<SellPostDTO.SellPostResponseDto> searchKeyword(Pageable pageable, String keyword,Long memberId) {
 
-        List<SellPost> sellPosts = sellPostRepository.searchByKeyword(pageable, keyword);
+        List<SellPostDTO.SellPostResponseDto> sellPosts = sellPostRepository.searchByKeyword(pageable, keyword,memberId);
 
         String countSql = "SELECT COUNT(*) FROM sellpost";
         int totalElements = jdbcTemplate.queryForObject(countSql, Integer.class);
 
         return new PageImpl<>(
-                sellPosts.stream()
-                        .map(SellPostConverter::sellPostResponseDto)
-                        .collect(Collectors.toList()),
+                sellPosts,
                 pageable,
                 totalElements
         );

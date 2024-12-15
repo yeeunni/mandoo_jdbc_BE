@@ -2,6 +2,7 @@ package mandooparty.mandoo.repository;
 
 import mandooparty.mandoo.domain.Member;
 import mandooparty.mandoo.domain.SellPost;
+import mandooparty.mandoo.web.dto.SellPostDTO;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,28 @@ public class SellPostRepository {
                     sql,
                     new Object[]{sellPostId},
                     new BeanPropertyRowMapper<>(SellPost.class)  // 수정된 부분
+            );
+            return Optional.ofNullable(sellPost);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
+        }
+    }
+    public Optional<SellPostDTO.SellPostResponseDto> findByIdWithMemberId(Long sellPostId, Long memberId)
+    {
+        String sql="SELECT s.*,\n" +
+                "\tCASE \n" +
+                "        WHEN l.member_id IS NOT NULL THEN true\n" +
+                "        ELSE false\n" +
+                "    END AS is_liked\n" +
+                "FROM sellpost AS s\n" +
+                "LEFT JOIN likes l \n" +
+                "    ON s.sell_post_id = l.sell_post_id AND l.member_id = ?\n" +
+                "WHERE s.sell_post_id=?";
+        try {
+            SellPostDTO.SellPostResponseDto sellPost= jdbcTemplate.queryForObject(
+                    sql,
+                    new Object[]{memberId,sellPostId},
+                    sellPostWithMemberRowMapper  // 수정된 부분
             );
             return Optional.ofNullable(sellPost);
         } catch (EmptyResultDataAccessException e) {
@@ -153,6 +176,7 @@ public class SellPostRepository {
             @Override
             public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Map<String, Object> result = new HashMap<>();
+
                 result.put("createDate", rs.getDate("createDate"));
                 result.put("count", rs.getInt("count"));
                 return result;
@@ -241,36 +265,47 @@ public class SellPostRepository {
         return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
     }
 
-    public List<SellPost> searchByKeyword(Pageable pageable, String keyword) {
+    public List<SellPostDTO.SellPostResponseDto> searchByKeyword(Pageable pageable, String keyword,Long memberId) {
         // OFFSET 계산 (page * size)
         int offset = pageable.getPageNumber() * pageable.getPageSize();
         int limit = pageable.getPageSize();
 
         // SQL에 LIMIT과 OFFSET 반영
-        String sql = "SELECT * FROM sellpost WHERE MATCH(title) AGAINST(?) LIMIT ? OFFSET ?";
+        String sql = "SELECT s.*,\n"+
+        "CASE\n"+
+        "WHEN l.member_id IS NOT NULL THEN true\n"+
+        "ELSE false\n"+
+        "END AS is_liked\n"+
+        "FROM sellpost AS s\n"+
+        "LEFT JOIN likes l\n"+
+        "ON s.sell_post_id = l.sell_post_id AND l.member_id = ?\n"+
+        "WHERE MATCH(s.title) AGAINST(?)\n"+
+        "LIMIT ? OFFSET ?";
 
         // keyword, limit, offset 순서로 바인딩
-        List<SellPost> sellPosts = jdbcTemplate.query(sql, new Object[]{keyword, limit, offset}, new RowMapper<SellPost>() {
-            @Override
-            public SellPost mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return SellPost.builder()
-                        .sell_post_id(rs.getLong("sell_post_id")) // 또는 "sell_post_id"로 수정
-                        .created_at(rs.getTimestamp("created_at").toLocalDateTime())
-                        .title(rs.getString("title"))
-                        .description(rs.getString("description"))
-                        .city(rs.getString("city"))
-                        .gu(rs.getString("gu"))
-                        .dong(rs.getString("dong"))
-                        .member_id(rs.getLong("member_id"))
-                        .price(rs.getInt("price"))
-                        .status(rs.getInt("status"))
-                        .updated_at(rs.getTimestamp("updated_at").toLocalDateTime())
-                        .build();
-            }
-        });
+        List<SellPostDTO.SellPostResponseDto> sellPosts = jdbcTemplate.query(sql, new Object[]{memberId,keyword, limit, offset}, sellPostWithMemberRowMapper);
 
         return sellPosts;
     }
+
+    private final RowMapper<SellPostDTO.SellPostResponseDto> sellPostWithMemberRowMapper = (rs, rowNum) -> {
+        SellPostDTO.SellPostResponseDto dto=new SellPostDTO.SellPostResponseDto();
+        dto.setSellPostId(rs.getLong("sell_post_id"));
+        dto.setTitle(rs.getString("title"));
+        dto.setDescription(rs.getString("description"));
+        dto.setPrice(rs.getInt("price"));
+        dto.setCity(rs.getString("city"));
+        dto.setMemberId(rs.getLong("member_id"));
+        dto.setLikeCount(rs.getInt("like_count"));
+        dto.setCommentCount(rs.getInt("comment_count"));
+        dto.setGu(rs.getString("gu"));
+        dto.setStatus(rs.getInt("status"));
+        dto.setDong(rs.getString("dong"));
+        dto.setLikeExists(rs.getInt("is_liked"));
+        dto.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        dto.setModifiedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        return dto;
+    };
 
 }
 
