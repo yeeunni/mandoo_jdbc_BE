@@ -69,7 +69,32 @@ public class SellPostDTO {
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private List<String> categories;
-        private List<String> images;
+        private String images;
+        private Integer likeExists;
+        private List<CommentDTO.CommentResponseDto> comments; // 댓글 리스트 추가
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SellPostResponseWithLikeDto {
+        private Long sellPostId;
+        private String title;
+        private Integer price;
+        private String description;
+        private String city;
+        private String gu;
+        private String dong;
+        private Integer status;
+        private Long memberId;
+        private Integer likeCount;
+        private Integer commentCount;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
+        private List<String> categories;
+        private String images;
         private Integer likeExists;
         private List<CommentDTO.CommentResponseDto> comments; // 댓글 리스트 추가
     }

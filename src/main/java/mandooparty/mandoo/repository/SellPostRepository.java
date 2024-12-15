@@ -43,9 +43,14 @@ public class SellPostRepository {
             return Optional.empty();  // 결과가 없으면 Optional.empty() 반환
         }
     }
-    public Optional<SellPostDTO.SellPostResponseDto> findByIdWithMemberId(Long sellPostId, Long memberId)
+    public Optional<SellPostDTO.SellPostResponseWithLikeDto> findByIdWithMemberId(Long sellPostId, Long memberId)
     {
         String sql="SELECT s.*,\n" +
+                "si.path,\n"+
+                "c.member_id AS comment_member_id,\n"+
+        "c.created_at AS comment_created_at,\n"+
+            "c.updated_at AS comment_updated_at,\n"+
+        "c.content,c.comment_status, c.parent_comment_id\n"+
                 "\tCASE \n" +
                 "        WHEN l.member_id IS NOT NULL THEN true\n" +
                 "        ELSE false\n" +
@@ -53,12 +58,14 @@ public class SellPostRepository {
                 "FROM sellpost AS s\n" +
                 "LEFT JOIN likes l \n" +
                 "    ON s.sell_post_id = l.sell_post_id AND l.member_id = ?\n" +
+                "LEFT JOIN sellimagepath AS si \n" +
+                "    ON s.sell_post_id=si.sell_post_id\n" +
                 "WHERE s.sell_post_id=?";
         try {
-            SellPostDTO.SellPostResponseDto sellPost= jdbcTemplate.queryForObject(
+            SellPostDTO.SellPostResponseWithLikeDto sellPost= jdbcTemplate.queryForObject(
                     sql,
                     new Object[]{memberId,sellPostId},
-                    sellPostWithMemberRowMapper  // 수정된 부분
+                    sellPostWithLikeRowMapper  // 수정된 부분
             );
             return Optional.ofNullable(sellPost);
         } catch (EmptyResultDataAccessException e) {
@@ -265,13 +272,14 @@ public class SellPostRepository {
         return rowsAffected > 0;  // 영향을 받은 행이 있으면 true, 없으면 false 반환
     }
 
-    public List<SellPostDTO.SellPostResponseDto> searchByKeyword(Pageable pageable, String keyword,Long memberId) {
+    public List<SellPostDTO.SellPostResponseWithLikeDto> searchByKeyword(Pageable pageable, String keyword,Long memberId) {
         // OFFSET 계산 (page * size)
         int offset = pageable.getPageNumber() * pageable.getPageSize();
         int limit = pageable.getPageSize();
 
         // SQL에 LIMIT과 OFFSET 반영
         String sql = "SELECT s.*,\n"+
+                "si.path,\n"+
         "CASE\n"+
         "WHEN l.member_id IS NOT NULL THEN true\n"+
         "ELSE false\n"+
@@ -279,14 +287,37 @@ public class SellPostRepository {
         "FROM sellpost AS s\n"+
         "LEFT JOIN likes l\n"+
         "ON s.sell_post_id = l.sell_post_id AND l.member_id = ?\n"+
+                "LEFT JOIN sellimagepath as si\n"+
+                "ON s.sell_post_id=si.sell_post_id\n"+
         "WHERE MATCH(s.title) AGAINST(?)\n"+
         "LIMIT ? OFFSET ?";
 
         // keyword, limit, offset 순서로 바인딩
-        List<SellPostDTO.SellPostResponseDto> sellPosts = jdbcTemplate.query(sql, new Object[]{memberId,keyword, limit, offset}, sellPostWithMemberRowMapper);
+        List<SellPostDTO.SellPostResponseWithLikeDto> sellPosts = jdbcTemplate.query(sql, new Object[]{memberId,keyword, limit, offset}, sellPostWithLikeRowMapper);
 
         return sellPosts;
     }
+
+    private final RowMapper<SellPostDTO.SellPostResponseWithLikeDto> sellPostWithLikeRowMapper = (rs, rowNum) -> {
+        SellPostDTO.SellPostResponseWithLikeDto dto=new SellPostDTO.SellPostResponseWithLikeDto();
+        dto.setSellPostId(rs.getLong("sell_post_id"));
+        dto.setTitle(rs.getString("title"));
+        dto.setDescription(rs.getString("description"));
+        dto.setPrice(rs.getInt("price"));
+        dto.setCity(rs.getString("city"));
+        dto.setMemberId(rs.getLong("member_id"));
+        dto.setLikeCount(rs.getInt("like_count"));
+        dto.setCommentCount(rs.getInt("comment_count"));
+        dto.setGu(rs.getString("gu"));
+        dto.setStatus(rs.getInt("status"));
+        dto.setDong(rs.getString("dong"));
+        dto.setImages(rs.getString("path"));
+        dto.setLikeExists(rs.getInt("is_liked"));
+        dto.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        dto.setModifiedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        return dto;
+    };
+
 
     private final RowMapper<SellPostDTO.SellPostResponseDto> sellPostWithMemberRowMapper = (rs, rowNum) -> {
         SellPostDTO.SellPostResponseDto dto=new SellPostDTO.SellPostResponseDto();

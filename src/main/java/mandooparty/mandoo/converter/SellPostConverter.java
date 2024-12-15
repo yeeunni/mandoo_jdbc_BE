@@ -77,7 +77,7 @@ public class SellPostConverter {
                 .modifiedAt(sellPost.getUpdated_at())   // 수정일자 설정
                 .memberId(sellPost.getMember_id())
                 .categories(categories)                 // 카테고리 설정
-                .images(images)                         // 이미지 경로 설정
+                .images(images.get(0))                         // 이미지 경로 설정
                 .comments(comments)
                 .build();
     }
